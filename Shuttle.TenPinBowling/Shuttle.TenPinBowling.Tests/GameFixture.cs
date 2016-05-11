@@ -86,5 +86,26 @@ namespace Shuttle.TenPinBowling.Tests
 			game.Roll(2);
 			Assert.IsTrue(game.Roll(2).Open);
 		}
+
+		[Test]
+		public void Should_be_able_to_throw_a_perfect_game()
+		{
+			var game = new Game();
+
+			game.Start("Bowler");
+
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			Assert.AreEqual(300, game.Roll(10).Score);
+		}
 	}
 }

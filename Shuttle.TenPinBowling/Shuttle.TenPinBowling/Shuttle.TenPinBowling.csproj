@@ -48,7 +48,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Events\v1\FrameBonus.cs" />
     <Compile Include="Events\v1\GameStarted.cs" />
     <Compile Include="Events\v1\Pinfall.cs" />
     <Compile Include="Game.cs" />

@@ -30,14 +30,13 @@ namespace Shuttle.TenPinBowling
 			}
 		}
 
+		private int _roll = 1;
 		private int _frame = 1;
-		private int _frameRoll;
+		private int _frameRoll = 1;
 		private int _standingPins;
-		private readonly List<int> _rolls = new List<int>();
 
-		private List<int> _frameScore = new List<int>(10);
-		private List<FrameBonusRoll> _frameBonusRolls = new List<FrameBonusRoll>();
-
+		private readonly List<int> _frameScore = new List<int>();
+		private readonly List<FrameBonusRoll> _frameBonusRolls = new List<FrameBonusRoll>();
 
 		private GameStarted _gameStarted;
 		private bool _gameFinished;
@@ -80,6 +79,11 @@ namespace Shuttle.TenPinBowling
 			_gameStarted = gameStarted;
 			_standingPins = 10;
 
+			for (int i = 0; i < 10; i++)
+			{
+				_frameScore.Add(0);
+			}
+
 			return gameStarted;
 		}
 
@@ -97,25 +101,35 @@ namespace Shuttle.TenPinBowling
 
 			if (pins > _standingPins)
 			{
-				throw new ApplicationException(string.Format("You cannot knock over more than the '{0}' standing pins.", _standingPins));
+				throw new ApplicationException(string.Format("You cannot knock over more than the '{0}' standing pins.",
+					_standingPins));
 			}
 
-			_frameRoll++;
-			_rolls.Add(pins);
+			var strike = pins == 10 && (IsLastFrame || IsFirstRoll);
+			var spare = !strike && !IsFirstRoll && pins == _standingPins;
+			var frameFinished = !IsLastFrame
+				? (pins == 10) || IsSecondRoll
+				: (_bonusRoll ? IsThirdRoll : IsSecondRoll);
+
+			_gameFinished = frameFinished && IsLastFrame;
+			_bonusRoll = _frame == 10 && (strike || spare);
+			_standingPins -= pins;
+
+			_frameScore[_frame - 1] += pins;
 
 			var pinfall = new Pinfall
 			{
 				Pins = pins,
-				Strike = (pins == 10 && (IsLastFrame || IsFirstRoll)),
-				Spare = !IsFirstRoll && pins == _standingPins,
+				StandingPins = _standingPins,
+				Strike = strike,
+				Spare = spare,
 				Open = !IsFirstRoll && pins < _standingPins,
-				FrameFinished = !IsLastFrame
-					? (pins == 10) || IsSecondRoll
-					: (_bonusRoll ? IsThirdRoll : IsSecondRoll),
-				Score = TallyScore(),
+				FrameFinished = frameFinished,
+				GameFinished = _gameFinished,
+				BonusRoll = _bonusRoll,
 				Frame = _frame,
 				FrameRoll = _frameRoll,
-				OverallRoll = _rolls.Count
+				Roll = _roll++
 			};
 
 			foreach (var frameBonusRoll in _frameBonusRolls)
@@ -125,16 +139,41 @@ namespace Shuttle.TenPinBowling
 					continue;
 				}
 
-				pinfall.FrameBonusPins.Add(new FrameBonus
-				{
-					Frame = frameBonusRoll.Frame,
-					Pins = pins
-				});
+				pinfall.BonusFrames.Add(frameBonusRoll.Frame);
+
+				_frameScore[frameBonusRoll.Frame - 1] += pins;
 
 				frameBonusRoll.BonusAssigned();
 			}
 
-			return On(pinfall);
+			if (frameFinished || strike || spare)
+			{
+				_standingPins = 10;
+			}
+
+			if (strike && IsFirstRoll && !IsLastFrame)
+			{
+				_frameBonusRolls.Add(new FrameBonusRoll(_frame, 2));
+			}
+
+			if (spare)
+			{
+				_frameBonusRolls.Add(new FrameBonusRoll(_frame, 1));
+			}
+
+			pinfall.Score = Score();
+
+			if (frameFinished)
+			{
+				_frame++;
+				_frameRoll = 1;
+			}
+			else
+			{
+				_frameRoll++;
+			}
+
+			return pinfall;
 		}
 
 		private bool IsFirstRoll
@@ -154,24 +193,30 @@ namespace Shuttle.TenPinBowling
 
 		private bool IsLastFrame
 		{
-			get { return _frame != 10; }
+			get { return _frame == 10; }
 		}
 
-		private int TallyScore()
+		public int Score()
 		{
 			return _frameScore.Sum();
 		}
 
-		public Pinfall On(Pinfall pinfall)
+		public void On(Pinfall pinfall)
 		{
 			Guard.AgainstNull(pinfall, "pinfall");
 
-			_frame = pinfall.FrameFinished ? pinfall.Frame + 1 : pinfall.Frame;
-			_frameRoll = pinfall.FrameFinished ? 0 : pinfall.FrameRoll;
-			_standingPins = pinfall.FrameFinished ? 10 : 10 - pinfall.Pins;
+			_frame = pinfall.Frame;
+			_frameRoll = pinfall.FrameRoll;
+			_standingPins = pinfall.StandingPins;
 			_gameFinished = pinfall.FrameFinished && pinfall.Frame == 10;
+			_bonusRoll = pinfall.BonusRoll;
 
-			return pinfall;
+			_frameScore[_frame - 1] += pinfall.Pins;
+
+			foreach (var frame in pinfall.BonusFrames)
+			{
+				_frameScore[frame - 1] += pinfall.Pins;
+			}
 		}
 	}
 }
