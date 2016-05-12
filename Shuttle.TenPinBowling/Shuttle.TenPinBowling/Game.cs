@@ -1,35 +1,36 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using Shuttle.Core.Infrastructure;
 using Shuttle.TenPinBowling.Events.v1;
 
 namespace Shuttle.TenPinBowling
 {
-	public class Game
+	public class FrameBonusRoll
 	{
-		private class FrameBonusRoll
+		private int _rolls;
+		public int Frame { get; private set; }
+
+		public FrameBonusRoll(int frame, int rolls)
 		{
-			private int _rolls;
-			public int Frame { get; private set; }
-
-			public FrameBonusRoll(int frame, int rolls)
-			{
-				Frame = frame;
-				_rolls = rolls;
-			}
-
-			public void BonusAssigned()
-			{
-				_rolls--;
-			}
-
-			public bool ShouldAssignBonus
-			{
-				get { return _rolls > 0; }
-			}
+			Frame = frame;
+			_rolls = rolls;
 		}
 
+		public void BonusAssigned()
+		{
+			_rolls--;
+		}
+
+		public bool ShouldAssignBonus
+		{
+			get { return _rolls > 0; }
+		}
+	}
+
+	public class Game
+	{
 		private int _roll = 1;
 		private int _frame = 1;
 		private int _frameRoll = 1;
@@ -107,15 +108,15 @@ namespace Shuttle.TenPinBowling
 
 			var strike = pins == 10 && (IsLastFrame || IsFirstRoll);
 			var spare = !strike && !IsFirstRoll && pins == _standingPins;
+
+			_bonusRoll = _bonusRoll || _frame == 10 && (strike || spare);
+
 			var frameFinished = !IsLastFrame
 				? (pins == 10) || IsSecondRoll
 				: (_bonusRoll ? IsThirdRoll : IsSecondRoll);
 
 			_gameFinished = frameFinished && IsLastFrame;
-			_bonusRoll = _frame == 10 && (strike || spare);
 			_standingPins -= pins;
-
-			_frameScore[_frame - 1] += pins;
 
 			var pinfall = new Pinfall
 			{
@@ -132,46 +133,27 @@ namespace Shuttle.TenPinBowling
 				Roll = _roll++
 			};
 
-			foreach (var frameBonusRoll in _frameBonusRolls)
+			if (strike && !IsLastFrame)
 			{
-				if (!frameBonusRoll.ShouldAssignBonus)
+				pinfall.BonusRolls.Add(new BonusRoll
 				{
-					continue;
-				}
-
-				pinfall.BonusFrames.Add(frameBonusRoll.Frame);
-
-				_frameScore[frameBonusRoll.Frame - 1] += pins;
-
-				frameBonusRoll.BonusAssigned();
+					Frame = _frame,
+					Rolls = 2
+				});
 			}
 
-			if (frameFinished || strike || spare)
+			if (spare && !IsLastFrame)
 			{
-				_standingPins = 10;
+				pinfall.BonusRolls.Add(new BonusRoll
+				{
+					Frame = _frame,
+					Rolls = 1
+				});
 			}
 
-			if (strike && IsFirstRoll && !IsLastFrame)
-			{
-				_frameBonusRolls.Add(new FrameBonusRoll(_frame, 2));
-			}
-
-			if (spare)
-			{
-				_frameBonusRolls.Add(new FrameBonusRoll(_frame, 1));
-			}
+			On(pinfall);
 
 			pinfall.Score = Score();
-
-			if (frameFinished)
-			{
-				_frame++;
-				_frameRoll = 1;
-			}
-			else
-			{
-				_frameRoll++;
-			}
 
 			return pinfall;
 		}
@@ -206,16 +188,40 @@ namespace Shuttle.TenPinBowling
 			Guard.AgainstNull(pinfall, "pinfall");
 
 			_frame = pinfall.Frame;
-			_frameRoll = pinfall.FrameRoll;
+			_frameRoll = pinfall.FrameRoll + 1;
 			_standingPins = pinfall.StandingPins;
-			_gameFinished = pinfall.FrameFinished && pinfall.Frame == 10;
 			_bonusRoll = pinfall.BonusRoll;
+			_roll = pinfall.Roll + 1;
 
 			_frameScore[_frame - 1] += pinfall.Pins;
 
-			foreach (var frame in pinfall.BonusFrames)
+			foreach (var frameBonusRoll in _frameBonusRolls)
 			{
-				_frameScore[frame - 1] += pinfall.Pins;
+				if (!frameBonusRoll.ShouldAssignBonus)
+				{
+					continue;
+				}
+
+				_frameScore[frameBonusRoll.Frame - 1] += pinfall.Pins;
+
+				frameBonusRoll.BonusAssigned();
+			}
+
+			foreach (var bonusRoll in pinfall.BonusRolls)
+			{
+				_frameBonusRolls.Add(new FrameBonusRoll(bonusRoll.Frame, bonusRoll.Rolls));
+			}
+
+			if (pinfall.FrameFinished)
+			{
+				_frame++;
+				_gameFinished = pinfall.Frame == 10;
+				_frameRoll = 1;
+			}
+
+			if (pinfall.FrameFinished || pinfall.Strike || pinfall.Spare)
+			{
+				_standingPins = 10;
 			}
 		}
 	}

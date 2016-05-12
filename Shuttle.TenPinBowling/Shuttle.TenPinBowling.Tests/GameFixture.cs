@@ -105,7 +105,109 @@ namespace Shuttle.TenPinBowling.Tests
 			game.Roll(10);
 			game.Roll(10);
 			game.Roll(10);
-			Assert.AreEqual(300, game.Roll(10).Score);
+
+			var pinfall = game.Roll(10);
+
+			Assert.IsTrue(pinfall.GameFinished);
+			Assert.AreEqual(300, pinfall.Score);
+		}
+
+		[Test]
+		public void Should_be_able_to_throw_a_bonus_ball_from_a_spare()
+		{
+			var game = new Game();
+
+			game.Start("Bowler");
+
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(10);
+			game.Roll(5);
+			game.Roll(5);
+
+			var pinfall = game.Roll(10);
+
+			Assert.IsTrue(pinfall.GameFinished);
+			Assert.AreEqual(275, pinfall.Score);
+		}
+
+		[Test]
+		public void Should_be_able_to_throw_5_with_spares()
+		{
+			var game = new Game();
+
+			game.Start("Bowler");
+
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+			game.Roll(5);
+
+			var pinfall = game.Roll(5);
+
+			Assert.IsTrue(pinfall.GameFinished);
+			Assert.AreEqual(150, pinfall.Score);
+		}
+
+		[Test]
+		public void Should_be_able_to_throw_a_perfect_game_using_events()
+		{
+			var game = new Game();
+
+			var gameStarted = game.Start("Bowler");
+
+			var pinfall1 = game.Roll(10);
+			var pinfall2 = game.Roll(10);
+			var pinfall3 = game.Roll(10);
+			var pinfall4 = game.Roll(10);
+			var pinfall5 = game.Roll(10);
+			var pinfall6 = game.Roll(10);
+			var pinfall7 = game.Roll(10);
+			var pinfall8 = game.Roll(10);
+			var pinfall9 = game.Roll(10);
+
+			game = new Game();
+
+			game.On(gameStarted);
+			game.On(pinfall1);
+			game.On(pinfall2);
+			game.On(pinfall3);
+			game.On(pinfall4);
+			game.On(pinfall5);
+			game.On(pinfall6);
+			game.On(pinfall7);
+			game.On(pinfall8);
+			game.On(pinfall9);
+
+			game.Roll(10);
+			game.Roll(10);
+
+			var pinfall = game.Roll(10);
+
+			Assert.IsTrue(pinfall.GameFinished);
+			Assert.AreEqual(300, pinfall.Score);
 		}
 	}
 }

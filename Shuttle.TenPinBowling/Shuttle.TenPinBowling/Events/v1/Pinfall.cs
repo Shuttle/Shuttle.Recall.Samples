@@ -6,7 +6,7 @@ namespace Shuttle.TenPinBowling.Events.v1
 	{
 		public Pinfall()
 		{
-			BonusFrames = new List<int>();
+			BonusRolls = new List<BonusRoll>();
 		}
 
 		public int Frame { get; set; }
@@ -14,7 +14,7 @@ namespace Shuttle.TenPinBowling.Events.v1
 		public int Pins { get; set; }
 		public int Roll { get; set; }
 		public int Score { get; set; }
-		public List<int> BonusFrames { get; set; }
+		public List<BonusRoll> BonusRolls { get; set; }
 		public bool FrameFinished { get; set; }
 		public bool Strike { get; set; }
 		public bool Spare { get; set; }
