@@ -39,6 +39,11 @@
 			this.Pin8Button = new System.Windows.Forms.Button();
 			this.Pin9Button = new System.Windows.Forms.Button();
 			this.Pin10Button = new System.Windows.Forms.Button();
+			this.label2 = new System.Windows.Forms.Label();
+			this.Bowler = new System.Windows.Forms.TextBox();
+			this.StartGameButton = new System.Windows.Forms.Button();
+			this.listView1 = new System.Windows.Forms.ListView();
+			this.label3 = new System.Windows.Forms.Label();
 			this.Frame10 = new Shuttle.TenPinBowling.Shell.Frame();
 			this.Frame9 = new Shuttle.TenPinBowling.Shell.Frame();
 			this.Frame8 = new Shuttle.TenPinBowling.Shell.Frame();
@@ -49,10 +54,6 @@
 			this.Frame3 = new Shuttle.TenPinBowling.Shell.Frame();
 			this.Frame2 = new Shuttle.TenPinBowling.Shell.Frame();
 			this.Frame1 = new Shuttle.TenPinBowling.Shell.Frame();
-			this.label2 = new System.Windows.Forms.Label();
-			this.Bowler = new System.Windows.Forms.TextBox();
-			this.StartGameButton = new System.Windows.Forms.Button();
-			this.listView1 = new System.Windows.Forms.ListView();
 			this.SuspendLayout();
 			// 
 			// Pin1Button
@@ -164,6 +165,49 @@
 			this.Pin10Button.UseVisualStyleBackColor = true;
 			this.Pin10Button.Click += new System.EventHandler(this.PinKnockDownButton_Click);
 			// 
+			// label2
+			// 
+			this.label2.AutoSize = true;
+			this.label2.Location = new System.Drawing.Point(9, 9);
+			this.label2.Name = "label2";
+			this.label2.Size = new System.Drawing.Size(39, 13);
+			this.label2.TabIndex = 21;
+			this.label2.Text = "Bowler";
+			// 
+			// Bowler
+			// 
+			this.Bowler.Location = new System.Drawing.Point(12, 27);
+			this.Bowler.Name = "Bowler";
+			this.Bowler.Size = new System.Drawing.Size(157, 20);
+			this.Bowler.TabIndex = 22;
+			// 
+			// StartGameButton
+			// 
+			this.StartGameButton.Location = new System.Drawing.Point(12, 53);
+			this.StartGameButton.Name = "StartGameButton";
+			this.StartGameButton.Size = new System.Drawing.Size(157, 40);
+			this.StartGameButton.TabIndex = 23;
+			this.StartGameButton.Text = "Start Game";
+			this.StartGameButton.UseVisualStyleBackColor = true;
+			this.StartGameButton.Click += new System.EventHandler(this.StartGameButton_Click);
+			// 
+			// listView1
+			// 
+			this.listView1.Location = new System.Drawing.Point(175, 27);
+			this.listView1.Name = "listView1";
+			this.listView1.Size = new System.Drawing.Size(646, 66);
+			this.listView1.TabIndex = 24;
+			this.listView1.UseCompatibleStateImageBehavior = false;
+			// 
+			// label3
+			// 
+			this.label3.AutoSize = true;
+			this.label3.Location = new System.Drawing.Point(172, 11);
+			this.label3.Name = "label3";
+			this.label3.Size = new System.Drawing.Size(77, 13);
+			this.label3.TabIndex = 25;
+			this.label3.Text = "Games Started";
+			// 
 			// Frame10
 			// 
 			this.Frame10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -264,44 +308,12 @@
 			this.Frame1.TabIndex = 0;
 			this.Frame1.Title = "Frame 1";
 			// 
-			// label2
-			// 
-			this.label2.AutoSize = true;
-			this.label2.Location = new System.Drawing.Point(9, 9);
-			this.label2.Name = "label2";
-			this.label2.Size = new System.Drawing.Size(39, 13);
-			this.label2.TabIndex = 21;
-			this.label2.Text = "Bowler";
-			// 
-			// Bowler
-			// 
-			this.Bowler.Location = new System.Drawing.Point(12, 27);
-			this.Bowler.Name = "Bowler";
-			this.Bowler.Size = new System.Drawing.Size(157, 20);
-			this.Bowler.TabIndex = 22;
-			// 
-			// StartGameButton
-			// 
-			this.StartGameButton.Location = new System.Drawing.Point(12, 53);
-			this.StartGameButton.Name = "StartGameButton";
-			this.StartGameButton.Size = new System.Drawing.Size(157, 40);
-			this.StartGameButton.TabIndex = 23;
-			this.StartGameButton.Text = "Start Game";
-			this.StartGameButton.UseVisualStyleBackColor = true;
-			// 
-			// listView1
-			// 
-			this.listView1.Location = new System.Drawing.Point(175, 27);
-			this.listView1.Name = "listView1";
-			this.listView1.Size = new System.Drawing.Size(646, 66);
-			this.listView1.TabIndex = 24;
-			this.listView1.UseCompatibleStateImageBehavior = false;
-			// 
 			// MainView
 			// 
 			this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
 			this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
 			this.ClientSize = new System.Drawing.Size(831, 434);
+			this.Controls.Add(this.label3);
 			this.Controls.Add(this.listView1);
 			this.Controls.Add(this.StartGameButton);
 			this.Controls.Add(this.Bowler);
@@ -328,6 +340,8 @@
 			this.Controls.Add(this.Frame2);
 			this.Controls.Add(this.Frame1);
 			this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedDialog;
+			this.MaximizeBox = false;
+			this.MinimizeBox = false;
 			this.Name = "MainView";
 			this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
 			this.Text = "Shuttle Ten Pin Bowling";
@@ -363,6 +377,7 @@
 		private System.Windows.Forms.TextBox Bowler;
 		private System.Windows.Forms.Button StartGameButton;
 		private System.Windows.Forms.ListView listView1;
+		private System.Windows.Forms.Label label3;
 	}
 }
 

@@ -3,6 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Shuttle.Core.Data;
+using Shuttle.Core.Infrastructure;
+using Shuttle.Recall.SqlServer;
 
 namespace Shuttle.TenPinBowling.Shell
 {
@@ -16,7 +19,12 @@ namespace Shuttle.TenPinBowling.Shell
 		{
 			Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
-			Application.Run(new MainView());
+
+			var view = new MainView();
+
+			var presenter = new MainPresenter(view, new EventStore(new DefaultSerializer(), new DatabaseGateway(), new EventStoreQueryFactory()));
+
+			Application.Run(view);
 		}
 	}
 }
