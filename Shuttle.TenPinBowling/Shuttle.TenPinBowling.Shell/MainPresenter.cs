@@ -1,41 +1,80 @@
-﻿using Shuttle.Recall;
+﻿using Shuttle.Core.Data;
+using Shuttle.Recall;
 
 namespace Shuttle.TenPinBowling.Shell
 {
-	public class MainPresenter : IMainPresenter
-	{
-		private readonly IMainView _view;
-		private readonly IEventStore _eventStore;
-		private readonly IModel _model = new Model();
+    public class MainPresenter : IMainPresenter
+    {
+        private Game _game;
+        private readonly IMainView _view;
+        private readonly ITenPinBowlingDatabaseContextFactory _databaseContextFactory;
+        private readonly IDatabaseGateway _databaseGateway;
+        private readonly IEventStore _eventStore;
+        private readonly IBowlingQueryFactory _bowlingQueryFactory;
+        private readonly IModel _model = new Model();
 
-		public MainPresenter(IMainView view, IEventStore eventStore)
-		{
-			_view = view;
-			_eventStore = eventStore;
+        public MainPresenter(IMainView view, ITenPinBowlingDatabaseContextFactory databaseContextFactory, IDatabaseGateway databaseGateway, IEventStore eventStore, IBowlingQueryFactory bowlingQueryFactory)
+        {
+            _view = view;
+            _databaseContextFactory = databaseContextFactory;
+            _databaseGateway = databaseGateway;
+            _eventStore = eventStore;
+            _bowlingQueryFactory = bowlingQueryFactory;
 
-			view.Assign(this, _model);
-		}
+            view.Assign(this, _model);
 
-		public void Roll(int pins)
-		{
-			if (!_model.HasGameStarted)
-			{
-				_view.ShowMessage("No game has been started.");
+            FetchGames();
+        }
 
-				return;
-			}
-		}
+        private void FetchGames()
+        {
+            using (_databaseContextFactory.Create())
+            {
+                foreach (var row in _databaseGateway.GetRowsUsing(_bowlingQueryFactory.All()))
+                {
+                    _model.OnGameAdded(
+                        GameColumns.Id.MapFrom(row),
+                        GameColumns.Bowler.MapFrom(row),
+                        GameColumns.DateStarted.MapFrom(row)
+                        );
+                }
+            }
+        }
 
-		public void StartGame(string bowler)
-		{
-			if (string.IsNullOrEmpty(bowler))
-			{
-				_view.ShowMessage("Enter a bowler name.");
+        public void Roll(int pins)
+        {
+            if (!_model.HasGameStarted)
+            {
+                _view.ShowMessage("No game has been started.");
 
-				return;
-			}
+                return;
+            }
 
-			_model.OnGameStarted(bowler);
-		}
-	}
+
+        }
+
+        public void StartGame(string bowler)
+        {
+            if (string.IsNullOrEmpty(bowler))
+            {
+                _view.ShowMessage("Enter a bowler name.");
+
+                return;
+            }
+
+            _game = new Game();
+
+
+            using (_databaseContextFactory.Create())
+            {
+                var eventStream = new EventStream(_game.Id);
+
+                eventStream.AddEvent(_game.Start(bowler));
+
+                _eventStore.SaveEventStream(eventStream);
+            }
+
+            _model.OnGameStarted(bowler);
+        }
+    }
 }

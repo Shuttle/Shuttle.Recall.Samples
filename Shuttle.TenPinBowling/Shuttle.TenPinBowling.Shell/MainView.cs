@@ -1,10 +1,11 @@
-﻿using System.Windows.Forms;
+﻿using System;
+using System.Windows.Forms;
 
 namespace Shuttle.TenPinBowling.Shell
 {
 	public partial class MainView : Form, IMainView
 	{
-		private MainPresenter _presenter;
+		private IMainPresenter _presenter;
 		private IModel _model;
 
 		public MainView()
@@ -17,13 +18,31 @@ namespace Shuttle.TenPinBowling.Shell
 			_presenter.Roll(int.Parse(((Button) sender).Text));
 		}
 
-		public void Assign(MainPresenter presenter, IModel model)
+		public void Assign(IMainPresenter presenter, IModel model)
 		{
 			_presenter = presenter;
 			_model = model;
+
+		    WireEvents(model);
 		}
 
-		public void ShowMessage(string message)
+	    private void WireEvents(IModel model)
+	    {
+	        model.GameStarted += GameStarted;
+	        model.GameAdded += GameAdded;
+	    }
+
+	    private void GameAdded(object sender, GameAddedEventArgs e)
+	    {
+	        Games.Items.Add(string.Format("{0} ({1})", e.Bowler, e.DateStarted.ToString("yyyy-MM-dd hh:mm")));
+	    }
+
+	    private void GameStarted(object sender, EventArgs e)
+	    {
+	        Bowler.Text = _model.Bowler;
+	    }
+
+	    public void ShowMessage(string message)
 		{
 			MessageBox.Show(message, "Message", MessageBoxButtons.OK);
 		}

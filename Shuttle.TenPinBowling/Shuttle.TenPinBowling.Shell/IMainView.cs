@@ -2,7 +2,7 @@
 {
 	public interface IMainView
 	{
-		void Assign(MainPresenter presenter, IModel model);
+		void Assign(IMainPresenter presenter, IModel model);
 		void ShowMessage(string message);
 	}
 }
