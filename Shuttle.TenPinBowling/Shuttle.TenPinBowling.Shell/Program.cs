@@ -20,8 +20,9 @@ namespace Shuttle.TenPinBowling.Shell
 
             var view = new MainView();
 
-            var databaseContextFactory = new TenPinBowlingDatabaseContextFactory(new DbConnectionFactory(),
+            var databaseContextFactory = new DatabaseContextFactory(new DbConnectionFactory(),
                 new DbCommandFactory(), new ThreadStaticDatabaseContextCache());
+
             var databaseGateway = new DatabaseGateway();
 
             new MainPresenter(view,
@@ -36,7 +37,7 @@ namespace Shuttle.TenPinBowling.Shell
 
             var eventProjection = new EventProjection("Bowling");
 
-            eventProjection.AddEventHandler(new BowlingHandler(databaseContextFactory, databaseGateway,
+            eventProjection.AddEventHandler(new BowlingHandler(databaseGateway,
                 new BowlingQueryFactory()));
 
             eventProcessor.AddEventProjection(eventProjection);

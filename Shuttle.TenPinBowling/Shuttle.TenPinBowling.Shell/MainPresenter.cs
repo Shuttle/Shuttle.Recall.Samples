@@ -1,19 +1,21 @@
-﻿using Shuttle.Core.Data;
+﻿using System;
+using Shuttle.Core.Data;
 using Shuttle.Recall;
 
 namespace Shuttle.TenPinBowling.Shell
 {
     public class MainPresenter : IMainPresenter
     {
-        private Game _game;
-        private readonly IMainView _view;
-        private readonly ITenPinBowlingDatabaseContextFactory _databaseContextFactory;
+        private readonly IBowlingQueryFactory _bowlingQueryFactory;
+        private readonly IDatabaseContextFactory _databaseContextFactory;
         private readonly IDatabaseGateway _databaseGateway;
         private readonly IEventStore _eventStore;
-        private readonly IBowlingQueryFactory _bowlingQueryFactory;
         private readonly IModel _model = new Model();
+        private readonly IMainView _view;
+        private Game _game;
 
-        public MainPresenter(IMainView view, ITenPinBowlingDatabaseContextFactory databaseContextFactory, IDatabaseGateway databaseGateway, IEventStore eventStore, IBowlingQueryFactory bowlingQueryFactory)
+        public MainPresenter(IMainView view, IDatabaseContextFactory databaseContextFactory,
+            IDatabaseGateway databaseGateway, IEventStore eventStore, IBowlingQueryFactory bowlingQueryFactory)
         {
             _view = view;
             _databaseContextFactory = databaseContextFactory;
@@ -26,21 +28,6 @@ namespace Shuttle.TenPinBowling.Shell
             FetchGames();
         }
 
-        private void FetchGames()
-        {
-            using (_databaseContextFactory.Create())
-            {
-                foreach (var row in _databaseGateway.GetRowsUsing(_bowlingQueryFactory.All()))
-                {
-                    _model.OnGameAdded(
-                        GameColumns.Id.MapFrom(row),
-                        GameColumns.Bowler.MapFrom(row),
-                        GameColumns.DateStarted.MapFrom(row)
-                        );
-                }
-            }
-        }
-
         public void Roll(int pins)
         {
             if (!_model.HasGameStarted)
@@ -50,7 +37,24 @@ namespace Shuttle.TenPinBowling.Shell
                 return;
             }
 
+            try
+            {
+                var pinfall = _game.Roll(pins);
 
+                using (_databaseContextFactory.Create(Connections.EventStore))
+                {
+                    _eventStore.SaveEventStream(
+                        _eventStore.Get(_game.Id)
+                            .AddEvent(pinfall)
+                        );
+                }
+
+                _model.AddFrameScore(pinfall.Frame, pinfall.Roll, pinfall.Pins);
+            }
+            catch (Exception ex)
+            {
+                _view.ShowMessage(ex.Message);
+            }
         }
 
         public void StartGame(string bowler)
@@ -64,17 +68,50 @@ namespace Shuttle.TenPinBowling.Shell
 
             _game = new Game();
 
-
-            using (_databaseContextFactory.Create())
+            using (_databaseContextFactory.Create(Connections.EventStore))
             {
-                var eventStream = new EventStream(_game.Id);
+                var stream = new EventStream(_game.Id);
 
-                eventStream.AddEvent(_game.Start(bowler));
+                stream.AddEvent(_game.Start(bowler));
 
-                _eventStore.SaveEventStream(eventStream);
+                _eventStore.SaveEventStream(stream);
             }
 
             _model.OnGameStarted(bowler);
+            _model.AddGame(_game.Id, _model.Bowler, DateTime.Now);
+        }
+
+        public void SelectGame(Guid id)
+        {
+            _game = new Game(id);
+
+            using (_databaseContextFactory.Create(Connections.EventStore))
+            {
+                _eventStore.Get(id).Apply(_game);
+            }
+
+            using (_databaseContextFactory.Create(Connections.Projection))
+            {
+                _model.OnGameStarted(
+                    GameColumns.Bowler.MapFrom(
+                        _databaseGateway.GetSingleRowUsing(_bowlingQueryFactory.GetGame(id))
+                        ));
+            }
+        }
+
+        private void FetchGames()
+        {
+            using (_databaseContextFactory.Create(Connections.Projection))
+            {
+                foreach (var row in _databaseGateway.GetRowsUsing(_bowlingQueryFactory.All()))
+                {
+                    _model.AddGame(
+                        GameColumns.Id.MapFrom(row),
+                        GameColumns.Bowler.MapFrom(row),
+                        GameColumns.DateStarted.MapFrom(row)
+                        );
+                }
+            }
         }
     }
 }

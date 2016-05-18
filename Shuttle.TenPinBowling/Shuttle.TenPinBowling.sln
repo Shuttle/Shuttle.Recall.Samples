@@ -10,6 +10,9 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Shuttle.TenPinBowling.Shell", "Shuttle.TenPinBowling.Shell\Shuttle.TenPinBowling.Shell.csproj", "{E0E5F0C4-3954-4211-9665-991005077112}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".script", ".script", "{BE6AD35F-C601-44B3-B79F-7599F50AF3D2}"
+	ProjectSection(SolutionItems) = preProject
+		.script\ten-pin-bowling.sql = .script\ten-pin-bowling.sql
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -33,20 +33,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Shuttle.Core.Data, Version=4.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Data.4.0.0\lib\net452-full\Shuttle.Core.Data.dll</HintPath>
+    <Reference Include="Shuttle.Core.Data, Version=4.1.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Data.4.1.1\lib\net452-full\Shuttle.Core.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Shuttle.Core.Infrastructure, Version=4.1.12.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Infrastructure.4.1.12\lib\net452-full\Shuttle.Core.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Recall, Version=3.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.3.5.2\lib\net452-full\Shuttle.Recall.dll</HintPath>
+    <Reference Include="Shuttle.Recall, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.3.6.0\lib\net452-full\Shuttle.Recall.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Recall.SqlServer, Version=1.7.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.SqlServer.1.7.10\lib\net452-full\Shuttle.Recall.SqlServer.dll</HintPath>
+    <Reference Include="Shuttle.Recall.SqlServer, Version=1.8.3.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.SqlServer.1.8.3\lib\net452-full\Shuttle.Recall.SqlServer.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -63,8 +63,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Connections.cs" />
     <Compile Include="EventProcessing\BowlingHandler.cs" />
     <Compile Include="EventProcessing\BowlingQueryFactory.cs" />
+    <Compile Include="EventProcessing\FrameBonusColumns.cs" />
+    <Compile Include="EventProcessing\FrameColumns.cs" />
     <Compile Include="EventProcessing\GameColumns.cs" />
     <Compile Include="Frame.cs">
       <SubType>UserControl</SubType>
@@ -73,10 +76,11 @@
       <DependentUpon>Frame.cs</DependentUpon>
     </Compile>
     <Compile Include="EventProcessing\IBowlingQueryFactory.cs" />
+    <Compile Include="FrameScoreModel.cs" />
+    <Compile Include="FrameScoredEventArgs.cs" />
     <Compile Include="GameAddedEventArgs.cs" />
     <Compile Include="IMainPresenter.cs" />
     <Compile Include="IModel.cs" />
-    <Compile Include="ITenPinBowlingDatabaseContextFactory.cs" />
     <Compile Include="MainPresenter.cs" />
     <Compile Include="MainView.cs">
       <SubType>Form</SubType>
@@ -88,7 +92,6 @@
     <Compile Include="Model.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="TenPinBowlingDatabaseContextFactory.cs" />
     <EmbeddedResource Include="Frame.resx">
       <DependentUpon>Frame.cs</DependentUpon>
     </EmbeddedResource>

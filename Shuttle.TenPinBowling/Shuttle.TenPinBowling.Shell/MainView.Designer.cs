@@ -54,6 +54,8 @@
             this.Frame3 = new Shuttle.TenPinBowling.Shell.Frame();
             this.Frame2 = new Shuttle.TenPinBowling.Shell.Frame();
             this.Frame1 = new Shuttle.TenPinBowling.Shell.Frame();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ScoreDisplay = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Pin1Button
@@ -199,6 +201,8 @@
             this.Games.Size = new System.Drawing.Size(646, 66);
             this.Games.TabIndex = 24;
             this.Games.UseCompatibleStateImageBehavior = false;
+            this.Games.View = System.Windows.Forms.View.List;
+            this.Games.SelectedIndexChanged += new System.EventHandler(this.Games_SelectedIndexChanged);
             // 
             // label3
             // 
@@ -309,11 +313,32 @@
             this.Frame1.TabIndex = 0;
             this.Frame1.Title = "Frame 1";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(659, 352);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 26;
+            this.label4.Text = "Score";
+            // 
+            // ScoreDisplay
+            // 
+            this.ScoreDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ScoreDisplay.Location = new System.Drawing.Point(662, 377);
+            this.ScoreDisplay.Name = "ScoreDisplay";
+            this.ScoreDisplay.Padding = new System.Windows.Forms.Padding(5);
+            this.ScoreDisplay.Size = new System.Drawing.Size(159, 45);
+            this.ScoreDisplay.TabIndex = 27;
+            this.ScoreDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(831, 434);
+            this.Controls.Add(this.ScoreDisplay);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.Games);
             this.Controls.Add(this.StartGameButton);
@@ -379,6 +404,8 @@
 		private System.Windows.Forms.Button StartGameButton;
 		private System.Windows.Forms.ListView Games;
 		private System.Windows.Forms.Label label3;
-	}
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.Label ScoreDisplay;
+    }
 }
 

@@ -34,8 +34,8 @@
       <HintPath>..\packages\Shuttle.Core.Infrastructure.4.1.12\lib\net452-full\Shuttle.Core.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Recall, Version=3.5.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.3.5.2\lib\net452-full\Shuttle.Recall.dll</HintPath>
+    <Reference Include="Shuttle.Recall, Version=3.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.3.6.0\lib\net452-full\Shuttle.Recall.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
@@ -48,9 +48,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Events\v1\FrameBonus.cs" />
     <Compile Include="Events\v1\GameStarted.cs" />
     <Compile Include="Events\v1\Pinfall.cs" />
-    <Compile Include="Events\v1\BonusRoll.cs" />
     <Compile Include="Game.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
