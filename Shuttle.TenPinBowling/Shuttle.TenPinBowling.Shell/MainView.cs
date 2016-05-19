@@ -48,7 +48,7 @@ namespace Shuttle.TenPinBowling.Shell
 
                 if (model.Roll3Pins.HasValue)
                 {
-                    frame.Roll2(model.Roll3PinsDisplay);
+                    frame.Roll3(model.Roll3PinsDisplay);
                 }
 
                 frame.Score(model.Score);
@@ -101,6 +101,9 @@ namespace Shuttle.TenPinBowling.Shell
             {
                 GetFrame(i).Reset();
             }
+
+            ShowStandingPins();
+            ScoreDisplay.Text = string.Empty;
         }
 
         private Frame GetFrame(int frame)

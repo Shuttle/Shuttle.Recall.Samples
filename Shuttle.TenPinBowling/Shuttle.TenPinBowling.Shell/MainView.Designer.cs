@@ -238,7 +238,7 @@
             this.Frame10.Location = new System.Drawing.Point(662, 228);
             this.Frame10.Name = "Frame10";
             this.Frame10.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame10.Size = new System.Drawing.Size(157, 115);
+            this.Frame10.Size = new System.Drawing.Size(159, 115);
             this.Frame10.TabIndex = 9;
             this.Frame10.Title = "Frame 10";
             // 
@@ -248,7 +248,7 @@
             this.Frame9.Location = new System.Drawing.Point(499, 228);
             this.Frame9.Name = "Frame9";
             this.Frame9.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame9.Size = new System.Drawing.Size(157, 115);
+            this.Frame9.Size = new System.Drawing.Size(159, 115);
             this.Frame9.TabIndex = 8;
             this.Frame9.Title = "Frame 9";
             // 
@@ -258,7 +258,7 @@
             this.Frame8.Location = new System.Drawing.Point(336, 228);
             this.Frame8.Name = "Frame8";
             this.Frame8.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame8.Size = new System.Drawing.Size(157, 115);
+            this.Frame8.Size = new System.Drawing.Size(159, 115);
             this.Frame8.TabIndex = 7;
             this.Frame8.Title = "Frame 8";
             // 
@@ -268,7 +268,7 @@
             this.Frame7.Location = new System.Drawing.Point(173, 228);
             this.Frame7.Name = "Frame7";
             this.Frame7.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame7.Size = new System.Drawing.Size(157, 115);
+            this.Frame7.Size = new System.Drawing.Size(159, 115);
             this.Frame7.TabIndex = 6;
             this.Frame7.Title = "Frame 7";
             // 
@@ -278,7 +278,7 @@
             this.Frame6.Location = new System.Drawing.Point(10, 228);
             this.Frame6.Name = "Frame6";
             this.Frame6.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame6.Size = new System.Drawing.Size(157, 115);
+            this.Frame6.Size = new System.Drawing.Size(159, 115);
             this.Frame6.TabIndex = 5;
             this.Frame6.Title = "Frame 6";
             // 
@@ -288,7 +288,7 @@
             this.Frame5.Location = new System.Drawing.Point(662, 107);
             this.Frame5.Name = "Frame5";
             this.Frame5.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame5.Size = new System.Drawing.Size(157, 115);
+            this.Frame5.Size = new System.Drawing.Size(159, 115);
             this.Frame5.TabIndex = 4;
             this.Frame5.Title = "Frame 5";
             // 
@@ -298,7 +298,7 @@
             this.Frame4.Location = new System.Drawing.Point(499, 107);
             this.Frame4.Name = "Frame4";
             this.Frame4.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame4.Size = new System.Drawing.Size(157, 115);
+            this.Frame4.Size = new System.Drawing.Size(159, 115);
             this.Frame4.TabIndex = 3;
             this.Frame4.Title = "Frame 4";
             // 
@@ -308,7 +308,7 @@
             this.Frame3.Location = new System.Drawing.Point(336, 107);
             this.Frame3.Name = "Frame3";
             this.Frame3.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame3.Size = new System.Drawing.Size(157, 115);
+            this.Frame3.Size = new System.Drawing.Size(159, 115);
             this.Frame3.TabIndex = 2;
             this.Frame3.Title = "Frame 3";
             // 
@@ -318,7 +318,7 @@
             this.Frame2.Location = new System.Drawing.Point(173, 107);
             this.Frame2.Name = "Frame2";
             this.Frame2.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame2.Size = new System.Drawing.Size(157, 115);
+            this.Frame2.Size = new System.Drawing.Size(159, 115);
             this.Frame2.TabIndex = 1;
             this.Frame2.Title = "Frame 2";
             // 
@@ -328,7 +328,7 @@
             this.Frame1.Location = new System.Drawing.Point(10, 107);
             this.Frame1.Name = "Frame1";
             this.Frame1.Padding = new System.Windows.Forms.Padding(2);
-            this.Frame1.Size = new System.Drawing.Size(157, 115);
+            this.Frame1.Size = new System.Drawing.Size(159, 115);
             this.Frame1.TabIndex = 0;
             this.Frame1.Title = "Frame 1";
             // 

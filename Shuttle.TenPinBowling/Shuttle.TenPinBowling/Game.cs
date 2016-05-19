@@ -140,7 +140,7 @@ namespace Shuttle.TenPinBowling
             var pinfall = new Pinfall
             {
                 Pins = pins,
-                StandingPins = _standingPins,
+                StandingPins = _gameFinished ? 0 : (frameFinished || strike || spare) ? 10 : _standingPins,
                 Strike = strike,
                 Spare = spare,
                 Open = !IsFirstRoll && pins < _standingPins,
@@ -202,11 +202,6 @@ namespace Shuttle.TenPinBowling
                 _frame++;
                 _gameFinished = pinfall.Frame == 10;
                 _frameRoll = 1;
-            }
-
-            if (pinfall.FrameFinished || pinfall.Strike || pinfall.Spare)
-            {
-                _standingPins = 10;
             }
         }
     }

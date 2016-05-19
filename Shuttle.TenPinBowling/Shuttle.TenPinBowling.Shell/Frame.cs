@@ -22,7 +22,9 @@ namespace Shuttle.TenPinBowling.Shell
 	        Roll1Pins.Text = string.Empty;
 	        Roll2Pins.Text = string.Empty;
 	        Roll3Pins.Text = string.Empty;
-	        ScoreDisplay.Text = string.Empty;
+	        Roll3Pins.Visible = false;
+
+            ScoreDisplay.Text = string.Empty;
 	    }
 
 	    public void Roll1(string display)

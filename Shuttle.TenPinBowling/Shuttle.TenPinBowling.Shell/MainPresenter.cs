@@ -47,8 +47,8 @@ namespace Shuttle.TenPinBowling.Shell
                         );
                 }
 
-                _model.AddFrameScore(pinfall.Frame, pinfall.Roll, pinfall.Pins, pinfall.Strike, pinfall.Spare,
-                    pinfall.StandingPins);
+                _model.AddFrameScore(pinfall.Frame, pinfall.FrameRoll, pinfall.Pins, pinfall.Strike, pinfall.Spare,
+                     pinfall.StandingPins);
 
                 foreach (var frameBonus in pinfall.FrameBonuses)
                 {
@@ -106,9 +106,7 @@ namespace Shuttle.TenPinBowling.Shell
                         FrameColumns.Pins.MapFrom(row),
                         FrameColumns.Strike.MapFrom(row) == 1,
                         FrameColumns.Spare.MapFrom(row) == 1,
-                        FrameColumns.FrameFinished.MapFrom(row) == 1
-                            ? 10
-                            : FrameColumns.StandingPins.MapFrom(row));
+                        FrameColumns.StandingPins.MapFrom(row));
                 }
 
                 foreach (var row in _bowlingQuery.GameFrameBonuses(id))

@@ -8,11 +8,11 @@ namespace Shuttle.TenPinBowling.Shell
     public class Model : IModel
     {
         private List<FrameScoreModel> _frameScores;
+
         public event EventHandler<EventArgs> GameStarted = delegate { };
         public event EventHandler<GameAddedEventArgs> GameAdded = delegate { };
         public event EventHandler<EventArgs> FrameScored = delegate { };
-        public event EventHandler<EventArgs> StandingPinsSet = delegate { };
-
+        
         public bool HasGameStarted { get; private set; }
         public string Bowler { get; private set; }
         public int Score { get; private set;  }
@@ -27,6 +27,7 @@ namespace Shuttle.TenPinBowling.Shell
         {
             Bowler = bowler;
             Score = 0;
+            StandingPins = 10;
 
             _frameScores = new List<FrameScoreModel>();
 
