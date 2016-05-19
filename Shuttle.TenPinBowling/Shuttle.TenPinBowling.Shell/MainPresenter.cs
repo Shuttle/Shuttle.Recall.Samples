@@ -6,22 +6,20 @@ namespace Shuttle.TenPinBowling.Shell
 {
     public class MainPresenter : IMainPresenter
     {
-        private readonly IBowlingQueryFactory _bowlingQueryFactory;
+        private readonly IBowlingQuery _bowlingQuery;
         private readonly IDatabaseContextFactory _databaseContextFactory;
-        private readonly IDatabaseGateway _databaseGateway;
         private readonly IEventStore _eventStore;
         private readonly IModel _model = new Model();
         private readonly IMainView _view;
         private Game _game;
 
-        public MainPresenter(IMainView view, IDatabaseContextFactory databaseContextFactory,
-            IDatabaseGateway databaseGateway, IEventStore eventStore, IBowlingQueryFactory bowlingQueryFactory)
+        public MainPresenter(IMainView view, IDatabaseContextFactory databaseContextFactory, IEventStore eventStore,
+            IBowlingQuery bowlingQuery)
         {
             _view = view;
             _databaseContextFactory = databaseContextFactory;
-            _databaseGateway = databaseGateway;
             _eventStore = eventStore;
-            _bowlingQueryFactory = bowlingQueryFactory;
+            _bowlingQuery = bowlingQuery;
 
             view.Assign(this, _model);
 
@@ -49,7 +47,13 @@ namespace Shuttle.TenPinBowling.Shell
                         );
                 }
 
-                _model.AddFrameScore(pinfall.Frame, pinfall.Roll, pinfall.Pins);
+                _model.AddFrameScore(pinfall.Frame, pinfall.Roll, pinfall.Pins, pinfall.Strike, pinfall.Spare,
+                    pinfall.StandingPins);
+
+                foreach (var frameBonus in pinfall.FrameBonuses)
+                {
+                    _model.AddFrameBonusScore(frameBonus, pins);
+                }
             }
             catch (Exception ex)
             {
@@ -77,7 +81,7 @@ namespace Shuttle.TenPinBowling.Shell
                 _eventStore.SaveEventStream(stream);
             }
 
-            _model.OnGameStarted(bowler);
+            _model.StartGame(bowler);
             _model.AddGame(_game.Id, _model.Bowler, DateTime.Now);
         }
 
@@ -92,10 +96,27 @@ namespace Shuttle.TenPinBowling.Shell
 
             using (_databaseContextFactory.Create(Connections.Projection))
             {
-                _model.OnGameStarted(
-                    GameColumns.Bowler.MapFrom(
-                        _databaseGateway.GetSingleRowUsing(_bowlingQueryFactory.GetGame(id))
-                        ));
+                _model.StartGame(GameColumns.Bowler.MapFrom(_bowlingQuery.GetGame(id)));
+
+                foreach (var row in _bowlingQuery.GameFrames(id))
+                {
+                    _model.AddFrameScore(
+                        FrameColumns.Frame.MapFrom(row),
+                        FrameColumns.FrameRoll.MapFrom(row),
+                        FrameColumns.Pins.MapFrom(row),
+                        FrameColumns.Strike.MapFrom(row) == 1,
+                        FrameColumns.Spare.MapFrom(row) == 1,
+                        FrameColumns.FrameFinished.MapFrom(row) == 1
+                            ? 10
+                            : FrameColumns.StandingPins.MapFrom(row));
+                }
+
+                foreach (var row in _bowlingQuery.GameFrameBonuses(id))
+                {
+                    _model.AddFrameBonusScore(
+                        FrameBonusColumns.BonusFrame.MapFrom(row),
+                        FrameBonusColumns.BonusPins.MapFrom(row));
+                }
             }
         }
 
@@ -103,7 +124,7 @@ namespace Shuttle.TenPinBowling.Shell
         {
             using (_databaseContextFactory.Create(Connections.Projection))
             {
-                foreach (var row in _databaseGateway.GetRowsUsing(_bowlingQueryFactory.All()))
+                foreach (var row in _bowlingQuery.AllGames())
                 {
                     _model.AddGame(
                         GameColumns.Id.MapFrom(row),

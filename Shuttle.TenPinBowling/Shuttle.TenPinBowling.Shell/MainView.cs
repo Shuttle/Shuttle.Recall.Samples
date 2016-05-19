@@ -39,21 +39,52 @@ namespace Shuttle.TenPinBowling.Shell
             {
                 var frame = GetFrame(model.Frame);
 
-                frame.Roll1(model.Roll1Pins);
+                frame.Roll1(model.Roll1PinsDisplay);
 
                 if (model.Roll2Pins.HasValue)
                 {
-                    frame.Roll2(model.Roll2Pins.Value);
+                    frame.Roll2(model.Roll2PinsDisplay);
                 }
 
                 if (model.Roll3Pins.HasValue)
                 {
-                    frame.Roll2(model.Roll3Pins.Value);
+                    frame.Roll2(model.Roll3PinsDisplay);
                 }
 
                 frame.Score(model.Score);
             }
 
+            ScoreDisplay.Text = _model.Score.ToString();
+
+            ShowStandingPins();
+        }
+
+        private void ShowStandingPins()
+        {
+            HidePinButtons(_model.StandingPins);
+        }
+
+        private void HidePinButtons(int from)
+        {
+            for (int i = 1; i < 11; i++)
+            {
+                GetPinButton(i).Visible = (i <= from);
+            }
+        }
+
+        private Button GetPinButton(int pin)
+        {
+            var name = string.Format("Pin{0}Button", pin);
+
+            foreach (Control control in Controls)
+            {
+                if (control.Name.Equals(name))
+                {
+                    return (Button)control;
+                }
+            }
+
+            throw new ApplicationException(string.Format("Could not find a pin button control for pin number '{0}'.", pin));
         }
 
         private void GameAdded(object sender, GameAddedEventArgs e)

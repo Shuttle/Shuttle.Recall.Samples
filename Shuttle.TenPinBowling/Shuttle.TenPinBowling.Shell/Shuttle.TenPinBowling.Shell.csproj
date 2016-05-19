@@ -65,6 +65,7 @@
   <ItemGroup>
     <Compile Include="Connections.cs" />
     <Compile Include="EventProcessing\BowlingHandler.cs" />
+    <Compile Include="EventProcessing\BowlingQuery.cs" />
     <Compile Include="EventProcessing\BowlingQueryFactory.cs" />
     <Compile Include="EventProcessing\FrameBonusColumns.cs" />
     <Compile Include="EventProcessing\FrameColumns.cs" />
@@ -79,6 +80,7 @@
     <Compile Include="FrameScoreModel.cs" />
     <Compile Include="FrameScoredEventArgs.cs" />
     <Compile Include="GameAddedEventArgs.cs" />
+    <Compile Include="EventProcessing\IBowlingQuery.cs" />
     <Compile Include="IMainPresenter.cs" />
     <Compile Include="IModel.cs" />
     <Compile Include="MainPresenter.cs" />

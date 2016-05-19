@@ -12,12 +12,13 @@ namespace Shuttle.TenPinBowling.Shell
 		bool HasGameStarted { get; }
 	    string Bowler { get; }
         int Score { get; }
+        int StandingPins { get; }
 
         IEnumerable<FrameScoreModel> FrameScores { get; }
 
-	    void OnGameStarted(string bowler);
+	    void StartGame(string bowler);
 	    void AddGame(Guid id, string bowler, DateTime dateStarted);
-	    void AddFrameScore(int frame, int pins);
-	    void AddFrameScore(int frame, int roll, int pins);
+	    void AddFrameBonusScore(int frame, int pins);
+	    void AddFrameScore(int frame, int roll, int pins, bool strike, bool spare, int standingPins);
 	}
 }

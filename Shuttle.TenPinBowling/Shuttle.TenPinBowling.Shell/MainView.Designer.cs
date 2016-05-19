@@ -32,7 +32,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.Pin2Button = new System.Windows.Forms.Button();
             this.Pin3Button = new System.Windows.Forms.Button();
-            this.Ping4Button = new System.Windows.Forms.Button();
+            this.Pin4Button = new System.Windows.Forms.Button();
             this.Pin5Button = new System.Windows.Forms.Button();
             this.Pin6Button = new System.Windows.Forms.Button();
             this.Pin7Button = new System.Windows.Forms.Button();
@@ -44,6 +44,8 @@
             this.StartGameButton = new System.Windows.Forms.Button();
             this.Games = new System.Windows.Forms.ListView();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ScoreDisplay = new System.Windows.Forms.Label();
             this.Frame10 = new Shuttle.TenPinBowling.Shell.Frame();
             this.Frame9 = new Shuttle.TenPinBowling.Shell.Frame();
             this.Frame8 = new Shuttle.TenPinBowling.Shell.Frame();
@@ -54,8 +56,6 @@
             this.Frame3 = new Shuttle.TenPinBowling.Shell.Frame();
             this.Frame2 = new Shuttle.TenPinBowling.Shell.Frame();
             this.Frame1 = new Shuttle.TenPinBowling.Shell.Frame();
-            this.label4 = new System.Windows.Forms.Label();
-            this.ScoreDisplay = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // Pin1Button
@@ -97,15 +97,15 @@
             this.Pin3Button.UseVisualStyleBackColor = true;
             this.Pin3Button.Click += new System.EventHandler(this.PinKnockDownButton_Click);
             // 
-            // Ping4Button
+            // Pin4Button
             // 
-            this.Ping4Button.Location = new System.Drawing.Point(165, 377);
-            this.Ping4Button.Name = "Ping4Button";
-            this.Ping4Button.Size = new System.Drawing.Size(45, 45);
-            this.Ping4Button.TabIndex = 14;
-            this.Ping4Button.Text = "4";
-            this.Ping4Button.UseVisualStyleBackColor = true;
-            this.Ping4Button.Click += new System.EventHandler(this.PinKnockDownButton_Click);
+            this.Pin4Button.Location = new System.Drawing.Point(165, 377);
+            this.Pin4Button.Name = "Pin4Button";
+            this.Pin4Button.Size = new System.Drawing.Size(45, 45);
+            this.Pin4Button.TabIndex = 14;
+            this.Pin4Button.Text = "4";
+            this.Pin4Button.UseVisualStyleBackColor = true;
+            this.Pin4Button.Click += new System.EventHandler(this.PinKnockDownButton_Click);
             // 
             // Pin5Button
             // 
@@ -213,6 +213,25 @@
             this.label3.TabIndex = 25;
             this.label3.Text = "Games Started";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(659, 352);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(35, 13);
+            this.label4.TabIndex = 26;
+            this.label4.Text = "Score";
+            // 
+            // ScoreDisplay
+            // 
+            this.ScoreDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.ScoreDisplay.Location = new System.Drawing.Point(662, 377);
+            this.ScoreDisplay.Name = "ScoreDisplay";
+            this.ScoreDisplay.Padding = new System.Windows.Forms.Padding(5);
+            this.ScoreDisplay.Size = new System.Drawing.Size(159, 45);
+            this.ScoreDisplay.TabIndex = 27;
+            this.ScoreDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            // 
             // Frame10
             // 
             this.Frame10.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
@@ -313,25 +332,6 @@
             this.Frame1.TabIndex = 0;
             this.Frame1.Title = "Frame 1";
             // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(659, 352);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(35, 13);
-            this.label4.TabIndex = 26;
-            this.label4.Text = "Score";
-            // 
-            // ScoreDisplay
-            // 
-            this.ScoreDisplay.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.ScoreDisplay.Location = new System.Drawing.Point(662, 377);
-            this.ScoreDisplay.Name = "ScoreDisplay";
-            this.ScoreDisplay.Padding = new System.Windows.Forms.Padding(5);
-            this.ScoreDisplay.Size = new System.Drawing.Size(159, 45);
-            this.ScoreDisplay.TabIndex = 27;
-            this.ScoreDisplay.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
-            // 
             // MainView
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -350,7 +350,7 @@
             this.Controls.Add(this.Pin7Button);
             this.Controls.Add(this.Pin6Button);
             this.Controls.Add(this.Pin5Button);
-            this.Controls.Add(this.Ping4Button);
+            this.Controls.Add(this.Pin4Button);
             this.Controls.Add(this.Pin3Button);
             this.Controls.Add(this.Pin2Button);
             this.Controls.Add(this.label1);
@@ -392,7 +392,7 @@
 		private System.Windows.Forms.Label label1;
 		private System.Windows.Forms.Button Pin2Button;
 		private System.Windows.Forms.Button Pin3Button;
-		private System.Windows.Forms.Button Ping4Button;
+		private System.Windows.Forms.Button Pin4Button;
 		private System.Windows.Forms.Button Pin5Button;
 		private System.Windows.Forms.Button Pin6Button;
 		private System.Windows.Forms.Button Pin7Button;

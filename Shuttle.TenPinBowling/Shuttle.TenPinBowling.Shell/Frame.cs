@@ -25,20 +25,20 @@ namespace Shuttle.TenPinBowling.Shell
 	        ScoreDisplay.Text = string.Empty;
 	    }
 
-	    public void Roll1(int pins)
+	    public void Roll1(string display)
 	    {
-	        Roll1Pins.Text = pins.ToString();
+	        Roll1Pins.Text = display;
 	    }
 
-	    public void Roll2(int pins)
+	    public void Roll2(string display)
 	    {
-	        Roll2Pins.Text = pins.ToString();
+	        Roll2Pins.Text = display;
 	    }
 
-	    public void Roll3(int pins)
+	    public void Roll3(string display)
 	    {
-	        Roll3Pins.Text = pins.ToString();
-	        Roll3Pins.Visible = true;
+	        Roll3Pins.Text = display;
+	        Roll3Pins.Visible = !string.IsNullOrEmpty(display);
 	    }
 
 	    public void Score(int score)

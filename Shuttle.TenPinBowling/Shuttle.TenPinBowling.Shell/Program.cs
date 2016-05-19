@@ -27,9 +27,8 @@ namespace Shuttle.TenPinBowling.Shell
 
             new MainPresenter(view,
                 databaseContextFactory,
-                databaseGateway,
                 new EventStore(new DefaultSerializer(), databaseGateway, new EventStoreQueryFactory()),
-                new BowlingQueryFactory());
+                new BowlingQuery(databaseGateway, new BowlingQueryFactory()));
 
             var eventProcessor = EventProcessor.Create(c =>
                 c.ProjectionService(new ProjectionService(new DefaultSerializer(), ProjectionSection.Configuration(),
