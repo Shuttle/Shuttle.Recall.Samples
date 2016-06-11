@@ -77,7 +77,7 @@ namespace Shuttle.TenPinBowling.Tests
 		}
 
 		[Test]
-		public void Should_be_able_to_throw_a_open()
+		public void Should_be_able_to_throw_an_open()
 		{
 			var game = new Game();
 
