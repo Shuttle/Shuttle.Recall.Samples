@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Reflection;
 using System.Windows.Forms;
+using Castle.Windsor;
+using Shuttle.Core.Castle;
 using Shuttle.Core.Data;
 using Shuttle.Core.Infrastructure;
 using Shuttle.Recall;
-using Shuttle.Recall.SqlServer;
+using Shuttle.Recall.Sql;
 
 namespace Shuttle.TenPinBowling.Shell
 {
@@ -20,32 +23,54 @@ namespace Shuttle.TenPinBowling.Shell
 
             var view = new MainView();
 
-            var databaseContextFactory = new DatabaseContextFactory(new DbConnectionFactory(),
-                new DbCommandFactory(), new ThreadStaticDatabaseContextCache());
+            var container = new WindsorComponentContainer(new WindsorContainer());
 
-            var databaseGateway = new DatabaseGateway();
+            container.Register<IScriptProvider>(new ScriptProvider(new ScriptProviderConfiguration
+            {
+                ResourceAssembly = Assembly.GetAssembly(typeof(PrimitiveEventRepository)),
+                ResourceNameFormat = SqlResources.SqlClientResourceNameFormat
+            }));
+
+            container.Register<IDatabaseContextCache, ThreadStaticDatabaseContextCache>();
+            container.Register<IDatabaseContextFactory, DatabaseContextFactory>();
+            container.Register<IDbConnectionFactory, DbConnectionFactory>();
+            container.Register<IDbCommandFactory, DbCommandFactory>();
+            container.Register<IDatabaseGateway, DatabaseGateway>();
+            container.Register<IQueryMapper, QueryMapper>();
+            container.Register<IProjectionRepository, ProjectionRepository>();
+            container.Register<IProjectionQueryFactory, ProjectionQueryFactory>();
+            container.Register<IPrimitiveEventRepository, PrimitiveEventRepository>();
+            container.Register<IPrimitiveEventQueryFactory, PrimitiveEventQueryFactory>();
+
+            container.Register<IProjectionConfiguration>(ProjectionSection.Configuration());
+            container.Register<EventProcessingModule, EventProcessingModule>();
+
+            container.Register<BowlingHandler, BowlingHandler>();
+            container.Register<IBowlingQueryFactory, BowlingQueryFactory>();
+            container.Register<IBowlingQuery, BowlingQuery>();
+
+            EventStoreConfigurator.Configure(container);
+
+            container.Resolve<EventProcessingModule>();
 
             new MainPresenter(view,
-                databaseContextFactory,
-                new EventStore(new DefaultSerializer(), databaseGateway, new EventStoreQueryFactory()),
-                new BowlingQuery(databaseGateway, new BowlingQueryFactory()));
+                container.Resolve<IDatabaseContextFactory>(),
+                EventStore.Create(container),
+                container.Resolve<IBowlingQuery>());
 
-            var eventProcessor = EventProcessor.Create(c =>
-                c.ProjectionService(new ProjectionService(new DefaultSerializer(), ProjectionSection.Configuration(),
-                    databaseContextFactory, databaseGateway, new ProjectionQueryFactory())));
+            var processor = EventProcessor.Create(container);
 
-            var eventProjection = new EventProjection("Bowling");
+            var projection = new Projection("Bowling");
 
-            eventProjection.AddEventHandler(new BowlingHandler(databaseGateway,
-                new BowlingQueryFactory()));
+            projection.AddEventHandler(container.Resolve<BowlingHandler>());
 
-            eventProcessor.AddEventProjection(eventProjection);
+            processor.AddProjection(projection);
 
-            eventProcessor.Start();
+            processor.Start();
 
             Application.Run(view);
 
-            eventProcessor.Dispose();
+            processor.Dispose();
         }
     }
 }

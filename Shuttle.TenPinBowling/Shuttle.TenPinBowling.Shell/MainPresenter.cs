@@ -41,7 +41,7 @@ namespace Shuttle.TenPinBowling.Shell
 
                 using (_databaseContextFactory.Create(Connections.EventStore))
                 {
-                    _eventStore.SaveEventStream(
+                    _eventStore.Save(
                         _eventStore.Get(_game.Id)
                             .AddEvent(pinfall)
                         );
@@ -78,7 +78,7 @@ namespace Shuttle.TenPinBowling.Shell
 
                 stream.AddEvent(_game.Start(bowler));
 
-                _eventStore.SaveEventStream(stream);
+                _eventStore.Save(stream);
             }
 
             _model.StartGame(bowler);

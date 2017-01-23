@@ -4,15 +4,14 @@ using Shuttle.TenPinBowling.Events.v1;
 
 namespace Shuttle.TenPinBowling.Shell
 {
-    public class BowlingHandler:
+    public class BowlingHandler :
         IEventHandler<GameStarted>,
         IEventHandler<Pinfall>
     {
         private readonly IBowlingQueryFactory _bowlingQueryFactory;
-        private readonly DatabaseGateway _databaseGateway;
+        private readonly IDatabaseGateway _databaseGateway;
 
-        public BowlingHandler(DatabaseGateway databaseGateway,
-            IBowlingQueryFactory bowlingQueryFactory)
+        public BowlingHandler(IDatabaseGateway databaseGateway, IBowlingQueryFactory bowlingQueryFactory)
         {
             _databaseGateway = databaseGateway;
             _bowlingQueryFactory = bowlingQueryFactory;
@@ -20,18 +19,17 @@ namespace Shuttle.TenPinBowling.Shell
 
         public void ProcessEvent(IEventHandlerContext<GameStarted> context)
         {
-            _databaseGateway.ExecuteUsing(_bowlingQueryFactory.GameStarted(context.ProjectionEvent.Id,
-                context.DomainEvent));
+            _databaseGateway.ExecuteUsing(_bowlingQueryFactory.GameStarted(context.PrimitiveEvent.Id, context.Event));
         }
 
         public void ProcessEvent(IEventHandlerContext<Pinfall> context)
         {
-            _databaseGateway.ExecuteUsing(_bowlingQueryFactory.AddFrame(context.ProjectionEvent.Id, context.DomainEvent));
+            _databaseGateway.ExecuteUsing(_bowlingQueryFactory.AddFrame(context.PrimitiveEvent.Id, context.Event));
 
-            foreach (var frameBonus in context.DomainEvent.FrameBonuses)
+            foreach (var frameBonus in context.Event.FrameBonuses)
             {
-                _databaseGateway.ExecuteUsing(_bowlingQueryFactory.AddFrameBonus(context.ProjectionEvent.Id,
-                    context.DomainEvent.Frame, frameBonus, context.DomainEvent.Pins));
+                _databaseGateway.ExecuteUsing(_bowlingQueryFactory.AddFrameBonus(context.PrimitiveEvent.Id,
+                    context.Event.Frame, frameBonus, context.Event.Pins));
             }
         }
     }
