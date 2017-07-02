@@ -74,7 +74,7 @@ namespace Shuttle.TenPinBowling.Shell
 
             using (_databaseContextFactory.Create(Connections.EventStore))
             {
-                var stream = new EventStream(_game.Id);
+                var stream = _eventStore.CreateEventStream(_game.Id);
 
                 stream.AddEvent(_game.Start(bowler));
 

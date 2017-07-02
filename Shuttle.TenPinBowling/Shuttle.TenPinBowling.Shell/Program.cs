@@ -5,11 +5,6 @@ using Shuttle.Core.Castle;
 using Shuttle.Core.Data;
 using Shuttle.Core.Infrastructure;
 using Shuttle.Recall;
-using Shuttle.Recall.Sql;
-using IScriptProvider = Shuttle.Recall.Sql.IScriptProvider;
-using IScriptProviderConfiguration = Shuttle.Recall.Sql.IScriptProviderConfiguration;
-using ScriptProvider = Shuttle.Recall.Sql.ScriptProvider;
-using ScriptProviderConfiguration = Shuttle.Recall.Sql.ScriptProviderConfiguration;
 
 namespace Shuttle.TenPinBowling.Shell
 {
@@ -28,30 +23,11 @@ namespace Shuttle.TenPinBowling.Shell
 
 			var container = new WindsorComponentContainer(new WindsorContainer());
 
-			//container.Register<IScriptProviderConfiguration, ScriptProviderConfiguration>();
-			//container.Register<IScriptProvider, ScriptProvider>();
-
-			//container.Register<IDatabaseContextCache, ThreadStaticDatabaseContextCache>();
-			//container.Register<IDatabaseContextFactory, DatabaseContextFactory>();
-			//container.Register<IDbConnectionFactory, DbConnectionFactory>();
-			//container.Register<IDbCommandFactory, DbCommandFactory>();
-			//container.Register<IDatabaseGateway, DatabaseGateway>();
-			//container.Register<IQueryMapper, QueryMapper>();
-			//container.Register<IProjectionRepository, ProjectionRepository>();
-			//container.Register<IProjectionQueryFactory, ProjectionQueryFactory>();
-			//container.Register<IPrimitiveEventRepository, PrimitiveEventRepository>();
-			//container.Register<IPrimitiveEventQueryFactory, PrimitiveEventQueryFactory>();
-
-			//container.Register<IProjectionConfiguration>(ProjectionSection.Configuration());
-			//container.Register<EventProcessingModule, EventProcessingModule>();
-
 			container.Register<BowlingHandler, BowlingHandler>();
 			container.Register<IBowlingQueryFactory, BowlingQueryFactory>();
 			container.Register<IBowlingQuery, BowlingQuery>();
 
 			EventStore.Register(container);
-
-			container.Resolve<EventProcessingModule>();
 
 			new MainPresenter(view,
 				container.Resolve<IDatabaseContextFactory>(),

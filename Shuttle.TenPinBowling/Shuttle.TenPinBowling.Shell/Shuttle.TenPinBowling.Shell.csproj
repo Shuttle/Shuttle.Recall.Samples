@@ -49,30 +49,27 @@
       <HintPath>..\packages\Shuttle.Core.Data.8.0.0\lib\net452-full\Shuttle.Core.Data.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Core.Infrastructure, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Infrastructure.8.0.0\lib\net452-full\Shuttle.Core.Infrastructure.dll</HintPath>
+    <Reference Include="Shuttle.Core.Infrastructure, Version=8.0.2.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Infrastructure.8.0.2\lib\net452-full\Shuttle.Core.Infrastructure.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Recall, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.8.0.0\lib\net452-full\Shuttle.Recall.dll</HintPath>
+    <Reference Include="Shuttle.Recall, Version=8.2.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.8.2.1\lib\net452-full\Shuttle.Recall.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Shuttle.Recall.Sql, Version=8.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.Sql.8.0.0\lib\net452-full\Shuttle.Recall.Sql.dll</HintPath>
+    <Reference Include="Shuttle.Recall.Sql.EventProcessing, Version=8.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.Sql.EventProcessing.8.0.9\lib\net452-full\Shuttle.Recall.Sql.EventProcessing.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Shuttle.Recall.Sql.Storage, Version=8.0.9.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.Sql.Storage.8.0.9\lib\net452-full\Shuttle.Recall.Sql.Storage.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="System" />
-    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
-    <Reference Include="System.Xml.Linq" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Deployment" />
     <Reference Include="System.Drawing" />
-    <Reference Include="System.Net.Http" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Connections.cs" />

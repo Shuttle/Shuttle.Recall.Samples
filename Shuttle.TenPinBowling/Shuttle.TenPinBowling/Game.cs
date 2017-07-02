@@ -88,7 +88,7 @@ namespace Shuttle.TenPinBowling
             });
         }
 
-        public GameStarted On(GameStarted gameStarted)
+        private GameStarted On(GameStarted gameStarted)
         {
             Guard.AgainstNull(gameStarted, "gameStarted");
 
@@ -174,7 +174,7 @@ namespace Shuttle.TenPinBowling
             return _frameScore.Sum();
         }
 
-        public void On(Pinfall pinfall)
+        private void On(Pinfall pinfall)
         {
             Guard.AgainstNull(pinfall, "pinfall");
 
