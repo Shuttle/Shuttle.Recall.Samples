@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using Shuttle.Core.Infrastructure;
+using Shuttle.Core.Contract;
 using Shuttle.TenPinBowling.Events.v1;
 
 namespace Shuttle.TenPinBowling
@@ -16,12 +16,9 @@ namespace Shuttle.TenPinBowling
             _rolls = rolls;
         }
 
-        public int Frame { get; private set; }
+        public int Frame { get; }
 
-        public bool ShouldAssignBonus
-        {
-            get { return _rolls > 0; }
-        }
+        public bool ShouldAssignBonus => _rolls > 0;
 
         public void BonusAssigned()
         {
@@ -52,32 +49,17 @@ namespace Shuttle.TenPinBowling
             Id = id;
         }
 
-        public Guid Id { get; private set; }
+        public Guid Id { get; }
 
-        private bool HasGameStarted
-        {
-            get { return _gameStarted != null; }
-        }
+        private bool HasGameStarted => _gameStarted != null;
 
-        private bool IsFirstRoll
-        {
-            get { return _frameRoll == 1; }
-        }
+        private bool IsFirstRoll => _frameRoll == 1;
 
-        private bool IsSecondRoll
-        {
-            get { return _frameRoll == 2; }
-        }
+        private bool IsSecondRoll => _frameRoll == 2;
 
-        private bool IsThirdRoll
-        {
-            get { return _frameRoll == 3; }
-        }
+        private bool IsThirdRoll => _frameRoll == 3;
 
-        private bool IsLastFrame
-        {
-            get { return _frame == 10; }
-        }
+        private bool IsLastFrame => _frame == 10;
 
         public GameStarted Start(string bowler)
         {
@@ -88,7 +70,7 @@ namespace Shuttle.TenPinBowling
             });
         }
 
-        public GameStarted On(GameStarted gameStarted)
+        private GameStarted On(GameStarted gameStarted)
         {
             Guard.AgainstNull(gameStarted, "gameStarted");
 
@@ -131,8 +113,8 @@ namespace Shuttle.TenPinBowling
             var spare = !strike && !IsFirstRoll && pins == _standingPins;
 
             var frameFinished = !IsLastFrame
-                ? (pins == 10) || IsSecondRoll
-                : IsThirdRoll || (IsSecondRoll && !(spare || strike));
+                ? pins == 10 || IsSecondRoll
+                : IsThirdRoll || IsSecondRoll && !(spare || strike);
 
             _gameFinished = frameFinished && IsLastFrame;
             _standingPins -= pins;
@@ -140,13 +122,16 @@ namespace Shuttle.TenPinBowling
             var pinfall = new Pinfall
             {
                 Pins = pins,
-                StandingPins = _gameFinished ? 0 : (frameFinished || strike || spare) ? 10 : _standingPins,
+                StandingPins = _gameFinished ? 0 :
+                    frameFinished || strike || spare ? 10 : _standingPins,
                 Strike = strike,
                 Spare = spare,
                 Open = !IsFirstRoll && pins < _standingPins,
                 FrameFinished = frameFinished,
                 GameFinished = _gameFinished,
-                BonusRolls = IsLastFrame ? 0 : strike ? 2 : spare ? 1 : 0,
+                BonusRolls = IsLastFrame ? 0 :
+                    strike ? 2 :
+                    spare ? 1 : 0,
                 Frame = _frame,
                 FrameRoll = _frameRoll,
                 Roll = _roll++
@@ -174,7 +159,7 @@ namespace Shuttle.TenPinBowling
             return _frameScore.Sum();
         }
 
-        public void On(Pinfall pinfall)
+        private void On(Pinfall pinfall)
         {
             Guard.AgainstNull(pinfall, "pinfall");
 
