@@ -76,8 +76,7 @@ namespace Shuttle.TenPinBowling
 
             if (HasGameStarted)
             {
-                throw new ApplicationException(string.Format("The game has already started with bowler '{0}'.",
-                    _gameStarted.Bowler));
+                throw new ApplicationException($"The game has already started with bowler '{_gameStarted.Bowler}'.");
             }
 
             _gameStarted = gameStarted;
@@ -105,8 +104,7 @@ namespace Shuttle.TenPinBowling
 
             if (pins > _standingPins)
             {
-                throw new ApplicationException(string.Format("You cannot knock over more than the '{0}' standing pins.",
-                    _standingPins));
+                throw new ApplicationException($"You cannot knock over more than the '{_standingPins}' standing pins.");
             }
 
             var strike = pins == 10 && (IsLastFrame || IsFirstRoll);
