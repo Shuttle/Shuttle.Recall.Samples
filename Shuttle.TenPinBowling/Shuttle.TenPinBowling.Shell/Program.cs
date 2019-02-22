@@ -5,6 +5,7 @@ using Shuttle.Core.Container;
 using Shuttle.Core.Castle;
 using Shuttle.Core.Data;
 using Shuttle.Recall;
+using Shuttle.Recall.Sql.EventProcessing;
 
 namespace Shuttle.TenPinBowling.Shell
 {
@@ -22,6 +23,7 @@ namespace Shuttle.TenPinBowling.Shell
 			var view = new MainView();
 
 			var container = new WindsorComponentContainer(new WindsorContainer());
+            var resolver = (IComponentResolver)container;
 
 			container.Register<BowlingHandler, BowlingHandler>();
 			container.Register<IBowlingQueryFactory, BowlingQueryFactory>();
@@ -36,13 +38,12 @@ namespace Shuttle.TenPinBowling.Shell
 
 			var processor = EventProcessor.Create(container);
 
-			var projection = new Projection("Bowling");
+            using (container.Resolve<IDatabaseContextFactory>().Create("ShuttleProjection"))
+            {
+                resolver.AddEventHandler<BowlingHandler>("Bowling");
+            }
 
-			projection.AddEventHandler(container.Resolve<BowlingHandler>());
-
-			processor.AddProjection(projection);
-
-			processor.Start();
+            processor.Start();
 
 			Application.Run(view);
 

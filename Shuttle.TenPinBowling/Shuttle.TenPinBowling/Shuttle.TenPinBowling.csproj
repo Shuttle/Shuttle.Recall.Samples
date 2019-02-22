@@ -1,11 +1,11 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net46</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Shuttle.Core.Contract" Version="10.0.0" />
+    <PackageReference Include="Shuttle.Core.Contract" Version="10.0.1" />
   </ItemGroup>
 
 </Project>
