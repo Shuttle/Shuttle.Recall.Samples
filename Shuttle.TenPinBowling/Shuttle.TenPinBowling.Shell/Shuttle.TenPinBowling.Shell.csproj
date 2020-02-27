@@ -33,10 +33,10 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="Castle.Core, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Core.4.3.1\lib\net45\Castle.Core.dll</HintPath>
+      <HintPath>..\packages\Castle.Core.4.4.0\lib\net45\Castle.Core.dll</HintPath>
     </Reference>
-    <Reference Include="Castle.Windsor, Version=4.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
-      <HintPath>..\packages\Castle.Windsor.4.1.1\lib\net45\Castle.Windsor.dll</HintPath>
+    <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
+      <HintPath>..\packages\Castle.Windsor.5.0.0\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.DotNet.PlatformAbstractions, Version=2.1.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.DotNet.PlatformAbstractions.2.1.0\lib\net45\Microsoft.DotNet.PlatformAbstractions.dll</HintPath>
@@ -45,7 +45,7 @@
       <HintPath>..\packages\Microsoft.Extensions.DependencyModel.2.1.0\lib\net451\Microsoft.Extensions.DependencyModel.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
+      <HintPath>..\packages\Newtonsoft.Json.12.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
     <Reference Include="Shuttle.Core.Castle, Version=10.0.5.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Castle.10.0.5\lib\net461\Shuttle.Core.Castle.dll</HintPath>
@@ -56,14 +56,14 @@
     <Reference Include="Shuttle.Core.Configuration, Version=10.0.3.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Configuration.10.0.3\lib\net461\Shuttle.Core.Configuration.dll</HintPath>
     </Reference>
-    <Reference Include="Shuttle.Core.Container, Version=10.0.11.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Container.10.0.11\lib\net461\Shuttle.Core.Container.dll</HintPath>
+    <Reference Include="Shuttle.Core.Container, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Container.11.0.0\lib\net461\Shuttle.Core.Container.dll</HintPath>
     </Reference>
     <Reference Include="Shuttle.Core.Contract, Version=10.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Contract.10.0.1\lib\net461\Shuttle.Core.Contract.dll</HintPath>
     </Reference>
-    <Reference Include="Shuttle.Core.Data, Version=10.0.10.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Data.10.0.10\lib\net461\Shuttle.Core.Data.dll</HintPath>
+    <Reference Include="Shuttle.Core.Data, Version=11.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Data.11.0.4\lib\net461\Shuttle.Core.Data.dll</HintPath>
     </Reference>
     <Reference Include="Shuttle.Core.Encryption, Version=10.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Encryption.10.0.2\lib\net461\Shuttle.Core.Encryption.dll</HintPath>
@@ -89,8 +89,8 @@
     <Reference Include="Shuttle.Core.Streams, Version=10.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Streams.10.0.2\lib\net461\Shuttle.Core.Streams.dll</HintPath>
     </Reference>
-    <Reference Include="Shuttle.Core.Threading, Version=10.0.2.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Core.Threading.10.0.2\lib\net461\Shuttle.Core.Threading.dll</HintPath>
+    <Reference Include="Shuttle.Core.Threading, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Core.Threading.11.0.0\lib\net461\Shuttle.Core.Threading.dll</HintPath>
     </Reference>
     <Reference Include="Shuttle.Core.TimeSpanTypeConverters, Version=10.0.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.TimeSpanTypeConverters.10.0.1\lib\net461\Shuttle.Core.TimeSpanTypeConverters.dll</HintPath>
@@ -98,14 +98,14 @@
     <Reference Include="Shuttle.Core.Transactions, Version=10.0.2.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Shuttle.Core.Transactions.10.0.2\lib\net461\Shuttle.Core.Transactions.dll</HintPath>
     </Reference>
-    <Reference Include="Shuttle.Recall, Version=10.2.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.10.2.1\lib\net461\Shuttle.Recall.dll</HintPath>
+    <Reference Include="Shuttle.Recall, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.11.0.0\lib\net461\Shuttle.Recall.dll</HintPath>
     </Reference>
-    <Reference Include="Shuttle.Recall.Sql.EventProcessing, Version=10.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.Sql.EventProcessing.10.2.0\lib\net461\Shuttle.Recall.Sql.EventProcessing.dll</HintPath>
+    <Reference Include="Shuttle.Recall.Sql.EventProcessing, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.Sql.EventProcessing.11.0.0\lib\net461\Shuttle.Recall.Sql.EventProcessing.dll</HintPath>
     </Reference>
-    <Reference Include="Shuttle.Recall.Sql.Storage, Version=10.2.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\Shuttle.Recall.Sql.Storage.10.2.0\lib\net461\Shuttle.Recall.Sql.Storage.dll</HintPath>
+    <Reference Include="Shuttle.Recall.Sql.Storage, Version=11.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\Shuttle.Recall.Sql.Storage.11.0.0\lib\net461\Shuttle.Recall.Sql.Storage.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Configuration" />

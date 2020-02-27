@@ -5,7 +5,6 @@ using Shuttle.Core.Container;
 using Shuttle.Core.Castle;
 using Shuttle.Core.Data;
 using Shuttle.Recall;
-using Shuttle.Recall.Sql.EventProcessing;
 
 namespace Shuttle.TenPinBowling.Shell
 {
