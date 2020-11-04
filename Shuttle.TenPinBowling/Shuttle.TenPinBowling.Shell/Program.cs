@@ -39,6 +39,8 @@ namespace Shuttle.TenPinBowling.Shell
 
             using (container.Resolve<IDatabaseContextFactory>().Create("ShuttleProjection"))
             {
+                processor.AddProjection("Bowling");
+
                 resolver.AddEventHandler<BowlingHandler>("Bowling");
             }
 
