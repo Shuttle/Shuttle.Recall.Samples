@@ -1,22 +1,26 @@
 ﻿using System;
+using System.IO;
 using System.Windows.Forms;
 using Castle.Windsor;
+using log4net;
 using Shuttle.Core.Container;
 using Shuttle.Core.Castle;
 using Shuttle.Core.Data;
+using Shuttle.Core.Log4Net;
+using Shuttle.Core.Logging;
 using Shuttle.Recall;
 
 namespace Shuttle.TenPinBowling.Shell
 {
 	internal static class Program
 	{
-		/// <summary>
-		///     The main entry point for the application.
-		/// </summary>
+
 		[STAThread]
 		private static void Main()
 		{
-			Application.EnableVisualStyles();
+            Log.Assign(new Log4NetLog(LogManager.GetLogger(typeof(Program))));
+
+            Application.EnableVisualStyles();
 			Application.SetCompatibleTextRenderingDefault(false);
 
 			var view = new MainView();
@@ -35,7 +39,7 @@ namespace Shuttle.TenPinBowling.Shell
 				EventStore.Create(container),
 				container.Resolve<IBowlingQuery>());
 
-			var processor = EventProcessor.Create(container);
+			var processor = container.Resolve<IEventProcessor>();
 
             using (container.Resolve<IDatabaseContextFactory>().Create("ShuttleProjection"))
             {
