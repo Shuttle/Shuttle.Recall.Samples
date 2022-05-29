@@ -32,7 +32,6 @@ namespace Shuttle.TenPinBowling.Shell
             var container = new WindsorComponentContainer(new WindsorContainer());
             var resolver = (IComponentResolver)container;
 
-            container.Register<BowlingHandler, BowlingHandler>();
             container.Register<IBowlingQueryFactory, BowlingQueryFactory>();
             container.Register<IBowlingQuery, BowlingQuery>();
 
@@ -52,9 +51,7 @@ namespace Shuttle.TenPinBowling.Shell
 
             using (container.Resolve<IDatabaseContextFactory>().Create("ShuttleProjection"))
             {
-                processor.AddProjection("Bowling");
-
-                resolver.AddEventHandler<BowlingHandler>("Bowling");
+                resolver.AddEventHandler<BowlingHandler>(processor.AddProjection("Bowling"));
             }
 
             processor.Start();
