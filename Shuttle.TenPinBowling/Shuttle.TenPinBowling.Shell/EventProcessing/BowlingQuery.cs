@@ -18,22 +18,22 @@ namespace Shuttle.TenPinBowling.Shell
 
         public DataRow GetGame(Guid id)
         {
-            return _databaseGateway.GetSingleRowUsing(_bowlingQueryFactory.GetGame(id));
+            return _databaseGateway.GetRow(_bowlingQueryFactory.GetGame(id));
         }
 
         public IEnumerable<DataRow> GameFrames(Guid gameId)
         {
-            return _databaseGateway.GetRowsUsing(_bowlingQueryFactory.GameFrames(gameId));
+            return _databaseGateway.GetRows(_bowlingQueryFactory.GameFrames(gameId));
         }
 
         public IEnumerable<DataRow> AllGames()
         {
-            return _databaseGateway.GetRowsUsing(_bowlingQueryFactory.AllGames());
+            return _databaseGateway.GetRows(_bowlingQueryFactory.AllGames());
         }
 
         public IEnumerable<DataRow> GameFrameBonuses(Guid gameId)
         {
-            return _databaseGateway.GetRowsUsing(_bowlingQueryFactory.GameFrameBonuses(gameId));
+            return _databaseGateway.GetRows(_bowlingQueryFactory.GameFrameBonuses(gameId));
         }
     }
 }
