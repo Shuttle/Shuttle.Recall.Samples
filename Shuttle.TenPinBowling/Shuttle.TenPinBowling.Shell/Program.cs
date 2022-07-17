@@ -2,12 +2,9 @@ using System;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using log4net;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Shuttle.Core.Data;
-using Shuttle.Core.Log4Net;
-using Shuttle.Core.Logging;
 using Shuttle.Recall;
 using Shuttle.Recall.Sql.EventProcessing;
 using Shuttle.Recall.Sql.Storage;
@@ -21,8 +18,6 @@ namespace Shuttle.TenPinBowling.Shell
         {
             DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance); 
             
-            Log.Assign(new Log4NetLog(LogManager.GetLogger(typeof(Program))));
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 

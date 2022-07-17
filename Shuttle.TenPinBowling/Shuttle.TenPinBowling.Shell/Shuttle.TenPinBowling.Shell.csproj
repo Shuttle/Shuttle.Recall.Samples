@@ -8,7 +8,6 @@
 
   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="6.0.0" />
-    <PackageReference Include="Shuttle.Core.Log4Net" Version="10.0.4" />
     <PackageReference Include="Shuttle.Recall" Version="16.0.0" />
     <PackageReference Include="Shuttle.Recall.Sql.EventProcessing" Version="16.0.0" />
     <PackageReference Include="Shuttle.Recall.Sql.Storage" Version="16.0.0" />
