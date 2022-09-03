@@ -19,16 +19,16 @@ namespace Shuttle.TenPinBowling.Shell
 
         public void ProcessEvent(IEventHandlerContext<GameStarted> context)
         {
-            _databaseGateway.ExecuteUsing(_bowlingQueryFactory.GameStarted(context.PrimitiveEvent.Id, context.Event));
+            _databaseGateway.Execute(_bowlingQueryFactory.GameStarted(context.PrimitiveEvent.Id, context.Event));
         }
 
         public void ProcessEvent(IEventHandlerContext<Pinfall> context)
         {
-            _databaseGateway.ExecuteUsing(_bowlingQueryFactory.AddFrame(context.PrimitiveEvent.Id, context.Event));
+            _databaseGateway.Execute(_bowlingQueryFactory.AddFrame(context.PrimitiveEvent.Id, context.Event));
 
             foreach (var frameBonus in context.Event.FrameBonuses)
             {
-                _databaseGateway.ExecuteUsing(_bowlingQueryFactory.AddFrameBonus(context.PrimitiveEvent.Id,
+                _databaseGateway.Execute(_bowlingQueryFactory.AddFrameBonus(context.PrimitiveEvent.Id,
                     context.Event.Frame, frameBonus, context.Event.Pins));
             }
         }

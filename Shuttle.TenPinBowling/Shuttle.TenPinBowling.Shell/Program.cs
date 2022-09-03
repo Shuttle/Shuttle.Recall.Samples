@@ -2,13 +2,9 @@ using System;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Windows.Forms;
-using Castle.Windsor;
-using log4net;
-using Shuttle.Core.Castle;
-using Shuttle.Core.Container;
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
 using Shuttle.Core.Data;
-using Shuttle.Core.Log4Net;
-using Shuttle.Core.Logging;
 using Shuttle.Recall;
 using Shuttle.Recall.Sql.EventProcessing;
 using Shuttle.Recall.Sql.Storage;
@@ -22,37 +18,44 @@ namespace Shuttle.TenPinBowling.Shell
         {
             DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance); 
             
-            Log.Assign(new Log4NetLog(LogManager.GetLogger(typeof(Program))));
-
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
             var view = new MainView();
 
-            var container = new WindsorComponentContainer(new WindsorContainer());
-            var resolver = (IComponentResolver)container;
+            var services = new ServiceCollection();
 
-            container.Register<IBowlingQueryFactory, BowlingQueryFactory>();
-            container.Register<IBowlingQuery, BowlingQuery>();
+            services.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build());
 
-            container.RegisterDataAccess();
-            container.RegisterEventStore();
-            container.RegisterEventStoreStorage();
-            container.RegisterEventProcessing();
+            services.AddSingleton<IBowlingQueryFactory, BowlingQueryFactory>();
+            services.AddSingleton<IBowlingQuery, BowlingQuery>();
 
-            container.Resolve<EventProcessingModule>();
+            services.AddDataAccess(builder =>
+            {
+                builder.AddConnectionString("ShuttleProjection", "System.Data.SqlClient");
+                builder.AddConnectionString("Shuttle", "System.Data.SqlClient");
+            });
+
+            services.AddSqlEventStorage();
+            services.AddSqlEventProcessing(builder =>
+            {
+                builder.Options.EventProjectionConnectionStringName = "ShuttleProjection";
+                builder.Options.EventStoreConnectionStringName = "Shuttle";
+            });
+
+            services.AddEventStore(builder =>
+            {
+                builder.AddEventHandler<BowlingHandler>("Bowling");
+            });
+
+            var serviceProvider = services.BuildServiceProvider();
 
             _ = new MainPresenter(view,
-                container.Resolve<IDatabaseContextFactory>(),
-                container.Resolve<IEventStore>(),
-                container.Resolve<IBowlingQuery>());
+                serviceProvider.GetRequiredService<IDatabaseContextFactory>(),
+                serviceProvider.GetRequiredService<IEventStore>(),
+                serviceProvider.GetRequiredService<IBowlingQuery>());
 
-            var processor = container.Resolve<IEventProcessor>();
-
-            using (container.Resolve<IDatabaseContextFactory>().Create("ShuttleProjection"))
-            {
-                resolver.AddEventHandler<BowlingHandler>(processor.AddProjection("Bowling"));
-            }
+            var processor = serviceProvider.GetRequiredService<IEventProcessor>();
 
             processor.Start();
 
