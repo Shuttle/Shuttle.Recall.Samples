@@ -1,23 +1,10 @@
-# Running
+## Running
 
-When using Visual Studio 2015+ the NuGet packages should be restored automatically.  If you find that they do not or if you are using an older version of Visual Studio please execute the following in a Visual Studio command prompt:
-
-~~~
-cd {extraction-folder}\Shuttle.Esb.Samples\Shuttle.RequestResponse
-nuget restore
-~~~
-
-If that does not work try executing the following in the **Package Manager Console**:
-
-~~~
-update-package -reinstall
-~~~
-
-Once you have opened the `Shuttle.RequestResponse.sln` solution in Visual Studio set the following at the startup project:
+Once you have opened the `Shuttle.TenPinBowling.sln` solution in Visual Studio set the following at the startup project:
 
 - Shuttle.TenPinBowling.Shell
 
-# Database
+## Database
 
 When you reference the `Shuttle.Recall.SqlServer` package a number of scripts are included in the relevant package folder:
 
