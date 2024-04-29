@@ -16,7 +16,7 @@ namespace Shuttle.TenPinBowling.Shell
             _bowlingQueryFactory = bowlingQueryFactory;
         }
 
-        public DataRow GetGame(Guid id)
+        public DataRow FindGame(Guid id)
         {
             return _databaseGateway.GetRow(_bowlingQueryFactory.GetGame(id));
         }
