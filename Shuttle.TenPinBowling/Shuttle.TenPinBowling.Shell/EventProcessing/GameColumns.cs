@@ -2,12 +2,11 @@
 using System.Data;
 using Shuttle.Core.Data;
 
-namespace Shuttle.TenPinBowling.Shell
+namespace Shuttle.TenPinBowling.Shell;
+
+public class GameColumns
 {
-    public class GameColumns
-    {
-        public static MappedColumn<Guid>  Id = new MappedColumn<Guid>("Id", DbType.Guid);
-        public static MappedColumn<string> Bowler = new MappedColumn<string>("Bowler", DbType.AnsiString, 65);
-        public static MappedColumn<DateTime>  DateStarted = new MappedColumn<DateTime>("DateStarted", DbType.DateTime);
-    }
+    public static Column<Guid> Id = new("Id", DbType.Guid);
+    public static Column<string> Bowler = new("Bowler", DbType.AnsiString, 65);
+    public static Column<DateTime> DateStarted = new("DateStarted", DbType.DateTime);
 }

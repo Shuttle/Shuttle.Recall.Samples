@@ -8,26 +8,26 @@ namespace Shuttle.TenPinBowling.Shell
     {
         public IQuery GameStarted(Guid id, GameStarted gameStarted)
         {
-            return RawQuery.Create("insert into [TenPinBowling].Game (Id, Bowler, DateStarted) values (@Id, @Bowler, @DateStarted)")
-                .AddParameterValue(GameColumns.Id, id)
-                .AddParameterValue(GameColumns.Bowler, gameStarted.Bowler)
-                .AddParameterValue(GameColumns.DateStarted, gameStarted.StartDate);
+            return new Query("insert into [TenPinBowling].Game (Id, Bowler, DateStarted) values (@Id, @Bowler, @DateStarted)")
+                .AddParameter(GameColumns.Id, id)
+                .AddParameter(GameColumns.Bowler, gameStarted.Bowler)
+                .AddParameter(GameColumns.DateStarted, gameStarted.StartDate);
         }
 
         public IQuery AllGames()
         {
-            return RawQuery.Create("select Id, Bowler, DateStarted from [TenPinBowling].Game");
+            return new Query("select Id, Bowler, DateStarted from [TenPinBowling].Game");
         }
 
         public IQuery GetGame(Guid id)
         {
-            return RawQuery.Create("select Id, Bowler, DateStarted from [TenPinBowling].Game where Id = @Id")
-                .AddParameterValue(GameColumns.Id, id);
+            return new Query("select Id, Bowler, DateStarted from [TenPinBowling].Game where Id = @Id")
+                .AddParameter(GameColumns.Id, id);
         }
 
         public IQuery AddFrame(Guid id, Pinfall domainEvent)
         {
-            return RawQuery.Create(@"
+            return new Query(@"
 insert into [TenPinBowling].[Frame]
     ([GameId]
     ,[Frame]
@@ -57,24 +57,24 @@ values
     ,@StandingPins
     ,@GameFinished)
 ")
-               .AddParameterValue(FrameColumns.GameId, id)
-               .AddParameterValue(FrameColumns.Frame, domainEvent.Frame)
-               .AddParameterValue(FrameColumns.FrameRoll, domainEvent.FrameRoll)
-               .AddParameterValue(FrameColumns.Pins, domainEvent.Pins)
-               .AddParameterValue(FrameColumns.Roll, domainEvent.Roll)
-               .AddParameterValue(FrameColumns.Score, domainEvent.Score)
-               .AddParameterValue(FrameColumns.BonusRolls, domainEvent.BonusRolls)
-               .AddParameterValue(FrameColumns.FrameFinished, domainEvent.FrameFinished)
-               .AddParameterValue(FrameColumns.Strike, domainEvent.Strike)
-               .AddParameterValue(FrameColumns.Spare, domainEvent.Spare)
-               .AddParameterValue(FrameColumns.Open, domainEvent.Open)
-               .AddParameterValue(FrameColumns.StandingPins, domainEvent.StandingPins)
-               .AddParameterValue(FrameColumns.GameFinished, domainEvent.GameFinished);
+               .AddParameter(FrameColumns.GameId, id)
+               .AddParameter(FrameColumns.Frame, domainEvent.Frame)
+               .AddParameter(FrameColumns.FrameRoll, domainEvent.FrameRoll)
+               .AddParameter(FrameColumns.Pins, domainEvent.Pins)
+               .AddParameter(FrameColumns.Roll, domainEvent.Roll)
+               .AddParameter(FrameColumns.Score, domainEvent.Score)
+               .AddParameter(FrameColumns.BonusRolls, domainEvent.BonusRolls)
+               .AddParameter(FrameColumns.FrameFinished, domainEvent.FrameFinished)
+               .AddParameter(FrameColumns.Strike, domainEvent.Strike)
+               .AddParameter(FrameColumns.Spare, domainEvent.Spare)
+               .AddParameter(FrameColumns.Open, domainEvent.Open)
+               .AddParameter(FrameColumns.StandingPins, domainEvent.StandingPins)
+               .AddParameter(FrameColumns.GameFinished, domainEvent.GameFinished);
         }
 
         public IQuery AddFrameBonus(Guid id, int frame, int bonusFrame, int pins)
         {
-            return RawQuery.Create(@"
+            return new Query(@"
 insert into [TenPinBowling].[FrameBonus]
     ([GameId]
     ,[Frame]
@@ -86,15 +86,15 @@ values
     ,@BonusFrame
     ,@BonusPins)
 ")
-                .AddParameterValue(FrameBonusColumns.GameId, id)
-                .AddParameterValue(FrameBonusColumns.Frame, frame)
-                .AddParameterValue(FrameBonusColumns.BonusFrame, bonusFrame)
-                .AddParameterValue(FrameBonusColumns.BonusPins, pins);
+                .AddParameter(FrameBonusColumns.GameId, id)
+                .AddParameter(FrameBonusColumns.Frame, frame)
+                .AddParameter(FrameBonusColumns.BonusFrame, bonusFrame)
+                .AddParameter(FrameBonusColumns.BonusPins, pins);
         }
 
         public IQuery GameFrames(Guid gameId)
         {
-            return RawQuery.Create(@"
+            return new Query(@"
 select
     [GameId]
     ,[Frame]
@@ -114,12 +114,12 @@ from
 where
     GameId = @GameId
 ")
-                .AddParameterValue(FrameColumns.GameId, gameId);
+                .AddParameter(FrameColumns.GameId, gameId);
         }
 
         public IQuery GameFrameBonuses(Guid gameId)
         {
-            return RawQuery.Create(@"
+            return new Query(@"
 select
     [GameId]
     ,[Frame]
@@ -130,7 +130,7 @@ from
 where
     GameId = @GameId
 ")
-                .AddParameterValue(FrameColumns.GameId, gameId);
+                .AddParameter(FrameColumns.GameId, gameId);
         }
     }
 }

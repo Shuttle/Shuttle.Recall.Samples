@@ -6,9 +6,9 @@ namespace Shuttle.TenPinBowling.Shell
 {
     public class FrameBonusColumns
     {
-        public static MappedColumn<Guid>  GameId = new MappedColumn<Guid>("GameId", DbType.Guid);
-        public static MappedColumn<int> Frame = new MappedColumn<int>("Frame", DbType.Int32);
-        public static MappedColumn<int> BonusFrame = new MappedColumn<int>("BonusFrame", DbType.Int32);
-        public static MappedColumn<int> BonusPins = new MappedColumn<int>("BonusPins", DbType.Int32);
+        public static Column<Guid>  GameId = new Column<Guid>("GameId", DbType.Guid);
+        public static Column<int> Frame = new Column<int>("Frame", DbType.Int32);
+        public static Column<int> BonusFrame = new Column<int>("BonusFrame", DbType.Int32);
+        public static Column<int> BonusPins = new Column<int>("BonusPins", DbType.Int32);
     }
 }

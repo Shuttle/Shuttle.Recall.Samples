@@ -74,7 +74,7 @@ namespace Shuttle.TenPinBowling.Shell
 
             using (_databaseContextFactory.Create(Connections.EventStore))
             {
-                var stream = _eventStore.CreateEventStream(_game.Id);
+                var stream = _eventStore.Get(_game.Id);
 
                 stream.AddEvent(_game.Start(bowler));
 
@@ -96,24 +96,33 @@ namespace Shuttle.TenPinBowling.Shell
 
             using (_databaseContextFactory.Create(Connections.Projection))
             {
-                _model.StartGame(GameColumns.Bowler.MapFrom(_bowlingQuery.GetGame(id)));
+                var gameRow = _bowlingQuery.FindGame(id);
+
+                if (gameRow == null)
+                {
+                    _view.ShowMessage("Could not find game.");
+
+                    return;
+                }
+
+                _model.StartGame(GameColumns.Bowler.Value(gameRow));
 
                 foreach (var row in _bowlingQuery.GameFrames(id))
                 {
                     _model.AddFrameScore(
-                        FrameColumns.Frame.MapFrom(row),
-                        FrameColumns.FrameRoll.MapFrom(row),
-                        FrameColumns.Pins.MapFrom(row),
-                        FrameColumns.Strike.MapFrom(row) == 1,
-                        FrameColumns.Spare.MapFrom(row) == 1,
-                        FrameColumns.StandingPins.MapFrom(row));
+                        FrameColumns.Frame.Value(row),
+                        FrameColumns.FrameRoll.Value(row),
+                        FrameColumns.Pins.Value(row),
+                        FrameColumns.Strike.Value(row) == 1,
+                        FrameColumns.Spare.Value(row) == 1,
+                        FrameColumns.StandingPins.Value(row));
                 }
 
                 foreach (var row in _bowlingQuery.GameFrameBonuses(id))
                 {
                     _model.AddFrameBonusScore(
-                        FrameBonusColumns.BonusFrame.MapFrom(row),
-                        FrameBonusColumns.BonusPins.MapFrom(row));
+                        FrameBonusColumns.BonusFrame.Value(row),
+                        FrameBonusColumns.BonusPins.Value(row));
                 }
             }
         }
@@ -125,9 +134,9 @@ namespace Shuttle.TenPinBowling.Shell
                 foreach (var row in _bowlingQuery.AllGames())
                 {
                     _model.AddGame(
-                        GameColumns.Id.MapFrom(row),
-                        GameColumns.Bowler.MapFrom(row),
-                        GameColumns.DateStarted.MapFrom(row)
+                        GameColumns.Id.Value(row),
+                        GameColumns.Bowler.Value(row),
+                        GameColumns.DateStarted.Value(row)
                         );
                 }
             }

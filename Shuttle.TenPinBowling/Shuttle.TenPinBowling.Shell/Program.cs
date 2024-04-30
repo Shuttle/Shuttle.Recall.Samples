@@ -1,67 +1,72 @@
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
+using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Shuttle.Core.Data;
 using Shuttle.Recall;
 using Shuttle.Recall.Sql.EventProcessing;
 using Shuttle.Recall.Sql.Storage;
 
-namespace Shuttle.TenPinBowling.Shell
+namespace Shuttle.TenPinBowling.Shell;
+
+internal static class Program
 {
-    internal static class Program
+    [STAThread]
+    private static async Task Main()
     {
-        [STAThread]
-        private static void Main()
-        {
-            DbProviderFactories.RegisterFactory("System.Data.SqlClient", SqlClientFactory.Instance); 
-            
-            Application.EnableVisualStyles();
-            Application.SetCompatibleTextRenderingDefault(false);
+        DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
 
-            var view = new MainView();
+        ApplicationConfiguration.Initialize();
 
-            var services = new ServiceCollection();
+        var view = new MainView();
 
-            services.AddSingleton<IConfiguration>(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build());
-
-            services.AddSingleton<IBowlingQueryFactory, BowlingQueryFactory>();
-            services.AddSingleton<IBowlingQuery, BowlingQuery>();
-
-            services.AddDataAccess(builder =>
+        var services = new ServiceCollection()
+            .AddSingleton<IConfiguration>(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
+            .AddSingleton<IBowlingQueryFactory, BowlingQueryFactory>()
+            .AddSingleton<IBowlingQuery, BowlingQuery>()
+            .AddDataAccess(builder =>
             {
-                builder.AddConnectionString("ShuttleProjection", "System.Data.SqlClient");
-                builder.AddConnectionString("Shuttle", "System.Data.SqlClient");
-            });
-
-            services.AddSqlEventStorage();
-            services.AddSqlEventProcessing(builder =>
+                builder.AddConnectionString("ShuttleProjection", "Microsoft.Data.SqlClient");
+                builder.AddConnectionString("Shuttle", "Microsoft.Data.SqlClient");
+            })
+            .AddSqlEventStorage(builder =>
             {
-                builder.Options.EventProjectionConnectionStringName = "ShuttleProjection";
-                builder.Options.EventStoreConnectionStringName = "Shuttle";
-            });
-
-            services.AddEventStore(builder =>
+                builder.Options.ConnectionStringName = "Shuttle";
+            })
+            .AddSqlEventProcessing(builder =>
+            {
+                builder.Options.ConnectionStringName = "ShuttleProjection";
+            })
+            .AddEventStore(builder =>
             {
                 builder.AddEventHandler<BowlingHandler>("Bowling");
             });
 
-            var serviceProvider = services.BuildServiceProvider();
+        var serviceProvider = services.BuildServiceProvider();
 
-            _ = new MainPresenter(view,
-                serviceProvider.GetRequiredService<IDatabaseContextFactory>(),
-                serviceProvider.GetRequiredService<IEventStore>(),
-                serviceProvider.GetRequiredService<IBowlingQuery>());
+        var hostedServices = serviceProvider.GetServices<IHostedService>().ToList();
 
-            var processor = serviceProvider.GetRequiredService<IEventProcessor>();
+        foreach (var hostedService in hostedServices)
+        {
+            await hostedService.StartAsync(CancellationToken.None);
+        }
 
-            processor.Start();
+        _ = new MainPresenter(view,
+            serviceProvider.GetRequiredService<IDatabaseContextFactory>(),
+            serviceProvider.GetRequiredService<IEventStore>(),
+            serviceProvider.GetRequiredService<IBowlingQuery>());
 
-            Application.Run(view);
+        Application.Run(view);
 
-            processor.Dispose();
+        foreach (var hostedService in hostedServices)
+        {
+            await hostedService.StopAsync(CancellationToken.None);
         }
     }
 }
