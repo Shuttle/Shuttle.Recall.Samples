@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Security.Cryptography.X509Certificates;
 
 namespace Shuttle.TenPinBowling.Shell
 {
@@ -18,10 +17,7 @@ namespace Shuttle.TenPinBowling.Shell
         public int Score { get; private set;  }
         public int StandingPins { get; private set; }
 
-        public IEnumerable<FrameScoreModel> FrameScores
-        {
-            get { return new ReadOnlyCollection<FrameScoreModel>(_frameScores); }
-        }
+        public IEnumerable<FrameScoreModel> FrameScores => new ReadOnlyCollection<FrameScoreModel>(_frameScores);
 
         public void StartGame(string bowler)
         {
@@ -33,7 +29,7 @@ namespace Shuttle.TenPinBowling.Shell
 
             HasGameStarted = true;
 
-            GameStarted.Invoke(this, new EventArgs());
+            GameStarted.Invoke(this, EventArgs.Empty);
         }
 
         public void AddGame(Guid id, string bowler, DateTime dateStarted)
@@ -52,9 +48,9 @@ namespace Shuttle.TenPinBowling.Shell
 
             model.AddScore(pins);
 
-            Score = Score + pins;
+            Score += pins;
 
-            FrameScored.Invoke(this, new EventArgs());
+            FrameScored.Invoke(this, EventArgs.Empty);
         }
 
         private FrameScoreModel GetFrame(int frame)
@@ -82,11 +78,11 @@ namespace Shuttle.TenPinBowling.Shell
                 }
             }
 
-            Score = Score + pins;
+            Score += pins;
 
             StandingPins = standingPins;
 
-            FrameScored.Invoke(this, new EventArgs());
+            FrameScored.Invoke(this, EventArgs.Empty);
         }
     }
 }

@@ -13,7 +13,7 @@ namespace Shuttle.TenPinBowling.Shell
             InitializeComponent();
         }
 
-        private void PinKnockDownButton_Click(object sender, System.EventArgs e)
+        private void PinKnockDownButton_Click(object sender, EventArgs e)
         {
             _presenter.Roll(int.Parse(((Button)sender).Text));
         }
@@ -66,7 +66,7 @@ namespace Shuttle.TenPinBowling.Shell
 
         private void HidePinButtons(int from)
         {
-            for (int i = 1; i < 11; i++)
+            for (var i = 0; i < 11; i++)
             {
                 GetPinButton(i).Visible = (i <= from);
             }
@@ -74,7 +74,7 @@ namespace Shuttle.TenPinBowling.Shell
 
         private Button GetPinButton(int pin)
         {
-            var name = string.Format("Pin{0}Button", pin);
+            var name = $"Pin{pin}Button";
 
             foreach (Control control in Controls)
             {
@@ -84,12 +84,12 @@ namespace Shuttle.TenPinBowling.Shell
                 }
             }
 
-            throw new ApplicationException(string.Format("Could not find a pin button control for pin number '{0}'.", pin));
+            throw new ApplicationException($"Could not find a pin button control for pin number '{pin}'.");
         }
 
         private void GameAdded(object sender, GameAddedEventArgs e)
         {
-            Games.Items.Add(string.Format("{0} ({1})", e.Bowler, e.DateStarted.ToString("yyyy-MM-dd hh:mm")))
+            Games.Items.Add($"{e.Bowler} ({e.DateStarted:yyyy-MM-dd hh:mm})")
                 .Tag = e.Id;
         }
 
@@ -124,6 +124,11 @@ namespace Shuttle.TenPinBowling.Shell
         public void ShowMessage(string message)
         {
             MessageBox.Show(message, "Message", MessageBoxButtons.OK);
+        }
+
+        public void GameFinished()
+        {
+            HidePinButtons(-1);
         }
 
         private void StartGameButton_Click(object sender, System.EventArgs e)

@@ -4,5 +4,6 @@
 	{
 		void Assign(IMainPresenter presenter, IModel model);
 		void ShowMessage(string message);
+		void GameFinished();
 	}
 }

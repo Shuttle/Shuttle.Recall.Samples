@@ -33,7 +33,7 @@ namespace Shuttle.TenPinBowling
         private readonly List<int> _frameScore = new List<int>();
         private int _frame = 1;
         private int _frameRoll = 1;
-        private bool _gameFinished;
+        public bool Finished { get; private set; }
 
         private GameStarted _gameStarted;
         private int _roll = 1;
@@ -97,7 +97,7 @@ namespace Shuttle.TenPinBowling
                 throw new ApplicationException("The game has not yet started.");
             }
 
-            if (_gameFinished)
+            if (Finished)
             {
                 throw new ApplicationException("The game has finished.");
             }
@@ -114,19 +114,19 @@ namespace Shuttle.TenPinBowling
                 ? pins == 10 || IsSecondRoll
                 : IsThirdRoll || IsSecondRoll && !(spare || strike);
 
-            _gameFinished = frameFinished && IsLastFrame;
+            Finished = frameFinished && IsLastFrame;
             _standingPins -= pins;
 
             var pinfall = new Pinfall
             {
                 Pins = pins,
-                StandingPins = _gameFinished ? 0 :
+                StandingPins = Finished ? 0 :
                     frameFinished || strike || spare ? 10 : _standingPins,
                 Strike = strike,
                 Spare = spare,
                 Open = !IsFirstRoll && pins < _standingPins,
                 FrameFinished = frameFinished,
-                GameFinished = _gameFinished,
+                GameFinished = Finished,
                 BonusRolls = IsLastFrame ? 0 :
                     strike ? 2 :
                     spare ? 1 : 0,
@@ -183,7 +183,7 @@ namespace Shuttle.TenPinBowling
             if (pinfall.FrameFinished)
             {
                 _frame++;
-                _gameFinished = pinfall.Frame == 10;
+                Finished = pinfall.Frame == 10;
                 _frameRoll = 1;
             }
         }
