@@ -88,10 +88,7 @@ namespace Shuttle.TenPinBowling.Shell
         {
             _game = new Game(id);
 
-            using (_databaseContextFactory.Create(Connections.EventStore))
-            {
-                _eventStore.Get(id).Apply(_game);
-            }
+            _eventStore.Get(id).Apply(_game);
 
             using (_databaseContextFactory.Create(Connections.Projection))
             {

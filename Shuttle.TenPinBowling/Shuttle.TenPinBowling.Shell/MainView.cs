@@ -118,7 +118,7 @@ namespace Shuttle.TenPinBowling.Shell
                 }
             }
 
-            throw new ApplicationException(string.Format("Could not find a frame control for frame number '{0}'.", frame));
+            throw new ApplicationException($"Could not find a frame control for frame number '{frame}'.");
         }
 
         public void ShowMessage(string message)
