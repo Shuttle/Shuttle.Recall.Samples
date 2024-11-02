@@ -6,9 +6,13 @@ Once you have opened the `Shuttle.TenPinBowling.sln` solution in Visual Studio s
 
 ## Database
 
-When you reference the `Shuttle.Recall.SqlServer` package a number of scripts are included in the relevant package folder:
+When you reference the `Shuttle.Recall.Sql.Storage` package a number of scripts are included in the relevant package folder:
 
-- `.\Shuttle.TenPinBowling\packages\Shuttle.Recall.SqlServer.{version}\scripts`
+- `.\Shuttle.TenPinBowling\packages\Shuttle.Recall.Sql.Storage.{version}\scripts`
+
+When you reference the `Shuttle.Recall.Sql.EventProcessing` package a number of scripts are included in the relevant package folder:
+
+- `.\Shuttle.TenPinBowling\packages\Shuttle.Recall.Sql.EventProcessing.{version}\scripts`
 
 The `{version}` bit will be in a `semver` format.
 

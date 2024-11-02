@@ -1,145 +1,145 @@
 ﻿using System;
+using System.Threading.Tasks;
+using Shuttle.Core.Contract;
 using Shuttle.Core.Data;
 using Shuttle.Recall;
 
-namespace Shuttle.TenPinBowling.Shell
+namespace Shuttle.TenPinBowling.Shell;
+
+public class MainPresenter : IMainPresenter
 {
-    public class MainPresenter : IMainPresenter
+    private readonly IBowlingQuery _bowlingQuery;
+    private readonly IDatabaseContextFactory _databaseContextFactory;
+    private readonly IEventStore _eventStore;
+    private readonly IModel _model = new Model();
+    private readonly IMainView _view;
+    private Game _game = new();
+
+    public MainPresenter(IMainView view, IDatabaseContextFactory databaseContextFactory, IEventStore eventStore, IBowlingQuery bowlingQuery)
     {
-        private readonly IBowlingQuery _bowlingQuery;
-        private readonly IDatabaseContextFactory _databaseContextFactory;
-        private readonly IEventStore _eventStore;
-        private readonly IModel _model = new Model();
-        private readonly IMainView _view;
-        private Game _game;
+        _view = view;
+        _databaseContextFactory = databaseContextFactory;
+        _eventStore = eventStore;
+        _bowlingQuery = bowlingQuery;
 
-        public MainPresenter(IMainView view, IDatabaseContextFactory databaseContextFactory, IEventStore eventStore,
-            IBowlingQuery bowlingQuery)
+        view.Assign(this, _model);
+
+        _ = FetchGamesAsync();
+    }
+
+    public async Task RollAsync(int pins)
+    {
+        if (!_model.HasGameStarted)
         {
-            _view = view;
-            _databaseContextFactory = databaseContextFactory;
-            _eventStore = eventStore;
-            _bowlingQuery = bowlingQuery;
+            _view.ShowMessage("No game has been started.");
 
-            view.Assign(this, _model);
-
-            FetchGames();
+            return;
         }
 
-        public void Roll(int pins)
+        try
         {
-            if (!_model.HasGameStarted)
+            var pinfall = _game.Roll(pins);
+
+            await using (_databaseContextFactory.Create(Connections.EventStore))
             {
-                _view.ShowMessage("No game has been started.");
+                await _eventStore.SaveAsync((await _eventStore.GetAsync(_game.Id)).Add(pinfall));
+            }
+
+            _model.AddFrameScore(pinfall.Frame, pinfall.FrameRoll, pinfall.Pins, pinfall.Strike, pinfall.Spare, pinfall.StandingPins);
+
+            foreach (var frameBonus in pinfall.FrameBonuses)
+            {
+                _model.AddFrameBonusScore(frameBonus, pins);
+            }
+        }
+        catch (Exception ex)
+        {
+            _view.ShowMessage(ex.Message);
+        }
+    }
+
+    public async Task StartGameAsync(string bowler)
+    {
+        if (string.IsNullOrEmpty(bowler))
+        {
+            _view.ShowMessage("Enter a bowler name.");
+
+            return;
+        }
+
+        _game = new();
+
+        await using (_databaseContextFactory.Create(Connections.EventStore))
+        {
+            var stream = await _eventStore.GetAsync(_game.Id);
+
+            stream.Add(_game.Start(bowler));
+
+            await _eventStore.SaveAsync(stream);
+        }
+
+        _model.StartGame(bowler);
+        _model.AddGame(_game.Id, _model.Bowler, DateTime.Now);
+    }
+
+    public async Task SelectGameAsync(Guid id)
+    {
+        _game = new(id);
+
+        await using (_databaseContextFactory.Create(Connections.EventStore))
+        {
+            (await _eventStore.GetAsync(id)).Apply(_game);
+        }
+
+        await using (_databaseContextFactory.Create(Connections.Projection))
+        {
+            var gameRow = await _bowlingQuery.FindGameAsync(id);
+
+            if (gameRow == null)
+            {
+                _view.ShowMessage("Could not find game.");
 
                 return;
             }
 
-            try
+            _model.StartGame(Guard.AgainstNullOrEmptyString(Columns.Bowler.Value(gameRow)));
+
+            foreach (var row in await _bowlingQuery.GameFramesAsync(id))
             {
-                var pinfall = _game.Roll(pins);
-
-                using (_databaseContextFactory.Create(Connections.EventStore))
-                {
-                    _eventStore.Save(
-                        _eventStore.Get(_game.Id)
-                            .AddEvent(pinfall)
-                        );
-                }
-
-                _model.AddFrameScore(pinfall.Frame, pinfall.FrameRoll, pinfall.Pins, pinfall.Strike, pinfall.Spare, pinfall.StandingPins);
-
-                foreach (var frameBonus in pinfall.FrameBonuses)
-                {
-                    _model.AddFrameBonusScore(frameBonus, pins);
-                }
+                _model.AddFrameScore(
+                    Columns.Frame.Value(row),
+                    Columns.FrameRoll.Value(row),
+                    Columns.Pins.Value(row),
+                    Columns.Strike.Value(row) == 1,
+                    Columns.Spare.Value(row) == 1,
+                    Columns.StandingPins.Value(row));
             }
-            catch (Exception ex)
+
+            foreach (var row in await _bowlingQuery.GameFrameBonusesAsync(id))
             {
-                _view.ShowMessage(ex.Message);
+                _model.AddFrameBonusScore(
+                    Columns.BonusFrame.Value(row),
+                    Columns.BonusPins.Value(row));
             }
         }
 
-        public void StartGame(string bowler)
+        if (_game.Finished)
         {
-            if (string.IsNullOrEmpty(bowler))
-            {
-                _view.ShowMessage("Enter a bowler name.");
-
-                return;
-            }
-
-            _game = new Game();
-
-            using (_databaseContextFactory.Create(Connections.EventStore))
-            {
-                var stream = _eventStore.Get(_game.Id);
-
-                stream.AddEvent(_game.Start(bowler));
-
-                _eventStore.Save(stream);
-            }
-
-            _model.StartGame(bowler);
-            _model.AddGame(_game.Id, _model.Bowler, DateTime.Now);
+            _view.GameFinished();
         }
+    }
 
-        public void SelectGame(Guid id)
+    private async Task FetchGamesAsync()
+    {
+        await using (_databaseContextFactory.Create(Connections.Projection))
         {
-            _game = new Game(id);
-
-            _eventStore.Get(id).Apply(_game);
-
-            using (_databaseContextFactory.Create(Connections.Projection))
+            foreach (var row in await _bowlingQuery.AllGamesAsync())
             {
-                var gameRow = _bowlingQuery.FindGame(id);
-
-                if (gameRow == null)
-                {
-                    _view.ShowMessage("Could not find game.");
-
-                    return;
-                }
-
-                _model.StartGame(GameColumns.Bowler.Value(gameRow));
-
-                foreach (var row in _bowlingQuery.GameFrames(id))
-                {
-                    _model.AddFrameScore(
-                        FrameColumns.Frame.Value(row),
-                        FrameColumns.FrameRoll.Value(row),
-                        FrameColumns.Pins.Value(row),
-                        FrameColumns.Strike.Value(row) == 1,
-                        FrameColumns.Spare.Value(row) == 1,
-                        FrameColumns.StandingPins.Value(row));
-                }
-
-                foreach (var row in _bowlingQuery.GameFrameBonuses(id))
-                {
-                    _model.AddFrameBonusScore(
-                        FrameBonusColumns.BonusFrame.Value(row),
-                        FrameBonusColumns.BonusPins.Value(row));
-                }
-            }
-
-            if (_game.Finished)
-            {
-                _view.GameFinished();
-            }
-        }
-
-        private void FetchGames()
-        {
-            using (_databaseContextFactory.Create(Connections.Projection))
-            {
-                foreach (var row in _bowlingQuery.AllGames())
-                {
-                    _model.AddGame(
-                        GameColumns.Id.Value(row),
-                        GameColumns.Bowler.Value(row),
-                        GameColumns.DateStarted.Value(row)
-                        );
-                }
+                _model.AddGame(
+                    Columns.Id.Value(row),
+                    Guard.AgainstNullOrEmptyString(Columns.Bowler.Value(row)),
+                    Columns.DateStarted.Value(row)
+                );
             }
         }
     }

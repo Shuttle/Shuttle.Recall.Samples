@@ -1,11 +1,11 @@
 ﻿using System;
+using System.Threading.Tasks;
 
-namespace Shuttle.TenPinBowling.Shell
+namespace Shuttle.TenPinBowling.Shell;
+
+public interface IMainPresenter
 {
-	public interface IMainPresenter
-	{
-	    void Roll(int pins);
-	    void StartGame(string bowler);
-	    void SelectGame(Guid id);
-	}
+    Task RollAsync(int pins);
+    Task SelectGameAsync(Guid id);
+    Task StartGameAsync(string bowler);
 }

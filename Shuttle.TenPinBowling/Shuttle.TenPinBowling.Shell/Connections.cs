@@ -1,8 +1,7 @@
-﻿namespace Shuttle.TenPinBowling.Shell
+﻿namespace Shuttle.TenPinBowling.Shell;
+
+public static class Connections
 {
-    public static class Connections
-    {
-        public static string EventStore = "Shuttle";
-        public static string Projection = "ShuttleProjection";
-    }
+    public static string EventStore = "Shuttle";
+    public static string Projection = "ShuttleProjection";
 }

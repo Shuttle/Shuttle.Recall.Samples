@@ -1,16 +1,11 @@
 using System;
 using System.Data.Common;
-using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Hosting;
 using Shuttle.Core.Data;
 using Shuttle.Recall;
-using Shuttle.Recall.Sql.EventProcessing;
 using Shuttle.Recall.Sql.Storage;
 
 namespace Shuttle.TenPinBowling.Shell;
@@ -18,7 +13,7 @@ namespace Shuttle.TenPinBowling.Shell;
 internal static class Program
 {
     [STAThread]
-    private static async Task Main()
+    private static void Main()
     {
         DbProviderFactories.RegisterFactory("Microsoft.Data.SqlClient", SqlClientFactory.Instance);
 
@@ -39,23 +34,9 @@ internal static class Program
             {
                 builder.Options.ConnectionStringName = "Shuttle";
             })
-            .AddSqlEventProcessing(builder =>
-            {
-                builder.Options.ConnectionStringName = "ShuttleProjection";
-            })
-            .AddEventStore(builder =>
-            {
-                builder.AddEventHandler<BowlingHandler>("Bowling");
-            });
+            .AddEventStore();
 
         var serviceProvider = services.BuildServiceProvider();
-
-        var hostedServices = serviceProvider.GetServices<IHostedService>().ToList();
-
-        foreach (var hostedService in hostedServices)
-        {
-            await hostedService.StartAsync(CancellationToken.None);
-        }
 
         _ = new MainPresenter(view,
             serviceProvider.GetRequiredService<IDatabaseContextFactory>(),
@@ -63,10 +44,5 @@ internal static class Program
             serviceProvider.GetRequiredService<IBowlingQuery>());
 
         Application.Run(view);
-
-        foreach (var hostedService in hostedServices)
-        {
-            await hostedService.StopAsync(CancellationToken.None);
-        }
     }
 }
