@@ -34,7 +34,7 @@ public class Game
     private int _frame = 1;
     private int _frameRoll = 1;
 
-    private GameStarted _gameStarted;
+    private GameStarted? _gameStarted;
     private int _roll = 1;
     private int _standingPins;
 
@@ -68,7 +68,7 @@ public class Game
 
         if (HasGameStarted)
         {
-            throw new ApplicationException($"The game has already started with bowler '{_gameStarted.Bowler}'.");
+            throw new ApplicationException($"The game has already started with bowler '{_gameStarted!.Bowler}'.");
         }
 
         _gameStarted = gameStarted;
@@ -102,7 +102,7 @@ public class Game
         {
             _frameScore[frameBonus - 1] += pinfall.Pins;
 
-            _frameBonusRolls.Find(candidate => candidate.Frame == frameBonus).BonusAssigned();
+            _frameBonusRolls.Find(candidate => candidate.Frame == frameBonus)!.BonusAssigned();
         }
 
         if (pinfall.FrameFinished)

@@ -1,5 +1,4 @@
 ﻿using System.Data.Common;
-using System.Reflection;
 using System.Text;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -8,7 +7,6 @@ using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using Shuttle.Core.Data;
 using Shuttle.Core.Data.Logging;
-using Shuttle.Core.Pipelines;
 using Shuttle.Recall;
 using Shuttle.Recall.Logging;
 using Shuttle.Recall.Sql.EventProcessing;
@@ -27,8 +25,6 @@ internal class Program
         var host = Host.CreateDefaultBuilder()
             .ConfigureServices(services =>
             {
-                var configuration = new ConfigurationBuilder().Build();
-
                 services
                     .AddSingleton<IConfiguration>(new ConfigurationBuilder().AddJsonFile("appsettings.json").Build())
                     .AddSingleton<IBowlingQueryFactory, BowlingQueryFactory>()
@@ -46,14 +42,22 @@ internal class Program
                     .AddSqlEventStorage(builder =>
                     {
                         builder.Options.ConnectionStringName = "Shuttle";
+                        builder.Options.Schema = "TenPinBowling";
+
+                        builder.UseSqlServer();
                     })
                     .AddSqlEventProcessing(builder =>
                     {
                         builder.Options.ConnectionStringName = "ShuttleProjection";
+                        builder.Options.Schema = "TenPinBowling";
+
+                        builder.UseSqlServer();
                     })
                     .AddEventStore(builder =>
                     {
-                        builder.AddEventHandler<BowlingHandler>("Bowling");
+                        builder.AddProjection("Bowling").AddEventHandler<BowlingHandler>();
+
+                        builder.Options.ProjectionThreadCount = 1;
                     })
                     .AddEventStoreLogging();
             })

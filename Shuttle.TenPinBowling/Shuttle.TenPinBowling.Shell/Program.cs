@@ -33,6 +33,9 @@ internal static class Program
             .AddSqlEventStorage(builder =>
             {
                 builder.Options.ConnectionStringName = "Shuttle";
+                builder.Options.Schema = "TenPinBowling";
+
+                builder.UseSqlServer();
             })
             .AddEventStore();
 
