@@ -9,8 +9,8 @@ public class BowlingHandler :
     IEventHandler<GameStarted>,
     IEventHandler<Pinfall>
 {
-    private readonly IDatabaseContextService _databaseContextService;
     private readonly IBowlingQueryFactory _bowlingQueryFactory;
+    private readonly IDatabaseContextService _databaseContextService;
 
     public BowlingHandler(IDatabaseContextService databaseContextService, IBowlingQueryFactory bowlingQueryFactory)
     {
@@ -25,11 +25,13 @@ public class BowlingHandler :
 
     public async Task ProcessEventAsync(IEventHandlerContext<Pinfall> context)
     {
-        await _databaseContextService.Active.ExecuteAsync(_bowlingQueryFactory.AddFrame(context.PrimitiveEvent.Id, context.Event));
+        var databaseContext = _databaseContextService.Active;
+
+        await databaseContext.ExecuteAsync(_bowlingQueryFactory.AddFrame(context.PrimitiveEvent.Id, context.Event));
 
         foreach (var frameBonus in context.Event.FrameBonuses)
         {
-            await _databaseContextService.Active.ExecuteAsync(_bowlingQueryFactory.AddFrameBonus(context.PrimitiveEvent.Id, context.Event.Frame, frameBonus, context.Event.Pins));
+            await databaseContext.ExecuteAsync(_bowlingQueryFactory.AddFrameBonus(context.PrimitiveEvent.Id, context.Event.Frame, frameBonus, context.Event.Pins));
         }
     }
 }
