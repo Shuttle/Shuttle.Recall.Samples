@@ -6,17 +6,22 @@ Once you have opened the `Shuttle.TenPinBowling.sln` solution in Visual Studio s
 
 ## Database
 
-When you reference the `Shuttle.Recall.SqlServer` package a number of scripts are included in the relevant package folder:
+The sample project uses the `Shuttle.Recall.Sql.Storage` and `Shuttle.Recall.Sql.EventProcessing` packages to store and process events.
 
-- `.\Shuttle.TenPinBowling\packages\Shuttle.Recall.SqlServer.{version}\scripts`
+In order to create the necessary databases and tables you will need to execute the relevant scripts.  The easiest is to clone the following repositories:
 
-The `{version}` bit will be in a `semver` format.
+```cmd
+git clone https://github.com/Shuttle/Shuttle.Recall.EFCore.SqlServer.Storage
+git clone https://github.com/Shuttle/Shuttle.Recall.EFCore.SqlServer.EventProcessing
+```
 
-> Create a new database called **Shuttle** and execute script `EventStoreCreate.sql` in the newly created database.
-> Create a new database called **ShuttleProjection** and execute script `ProjectionCreate.sql` in the newly created database.
+The execute the following commands Entity Framwork Core commands in solution folder:
 
-There is also a `.script` folder for the sample project:
+```
+dotnet ef database update --project .\Shuttle.Recall.EFCore.SqlServer.Storage\Shuttle.Recall.EFCore.SqlServer.Storage.csproj --connection "Server=.;Database=RecallSamples;User Id=sa;Password=Pass!000;TrustServerCertificate=true" -- --SchemaOverride="TenPinBowling"
+dotnet ef database update --project .\Shuttle.Recall.EFCore.SqlServer.EventProcessing\Shuttle.Recall.EFCore.SqlServer.EventProcessing.csproj --connection "Server=.;Database=RecallSamples;User Id=sa;Password=Pass!000;TrustServerCertificate=true" -- --SchemaOverride="TenPinBowling"
+```
+
+There is also a `.script` folder for the ten pin bowling project:
 
 - `.\Shuttle.TenPinBowling\.script`
-
-> Execute the 'ten-pin-bowling.sql' script against the **ShuttleProjection** database.

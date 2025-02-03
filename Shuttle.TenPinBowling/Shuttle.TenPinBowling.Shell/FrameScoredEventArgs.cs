@@ -1,6 +1,5 @@
-﻿namespace Shuttle.TenPinBowling.Shell
+﻿namespace Shuttle.TenPinBowling.Shell;
+
+public class FrameScoredEventArgs
 {
-    public class FrameScoredEventArgs
-    {
-    }
 }

@@ -1,9 +1,8 @@
-﻿namespace Shuttle.TenPinBowling.Shell
+﻿namespace Shuttle.TenPinBowling.Shell;
+
+public interface IMainView
 {
-	public interface IMainView
-	{
-		void Assign(IMainPresenter presenter, IModel model);
-		void ShowMessage(string message);
-		void GameFinished();
-	}
+    void Assign(IMainPresenter presenter, IModel model);
+    void GameFinished();
+    void ShowMessage(string message);
 }
