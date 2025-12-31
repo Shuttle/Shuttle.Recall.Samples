@@ -7,9 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Reference Include="Shuttle.Core.Contract">
-      <HintPath>C:\Users\me\.nuget\packages\shuttle.core.contract\21.0.0\lib\net10.0\Shuttle.Core.Contract.dll</HintPath>
-    </Reference>
+    <Folder Include="v1\" />
   </ItemGroup>
 
 </Project>
