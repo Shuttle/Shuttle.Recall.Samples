@@ -56,12 +56,12 @@ internal class Program
                             .UseSqlServerEventStorage(builder =>
                             {
                                 builder.Options.ConnectionString = context.Configuration.GetConnectionString("StorageConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'StorageConnection' is required which points to a Sql Server database that will contain the event storage.");
-                                builder.Options.Schema = "RecallSamples";
+                                builder.Options.Schema = "recall_samples";
                             })
                             .UseSqlServerEventProcessing(builder =>
                             {
                                 builder.Options.ConnectionString = context.Configuration.GetConnectionString("EventProcessingConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'EventProcessingConnection' is required which points to a Sql Server database that will contain the projections.");
-                                builder.Options.Schema = "RecallSamples";
+                                builder.Options.Schema = "recall_samples";
                             })
                             .AddProjection("orders").AddEventHandler<OrderHandler>();
                     })
