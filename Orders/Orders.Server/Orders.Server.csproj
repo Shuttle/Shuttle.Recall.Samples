@@ -17,10 +17,10 @@
     <PackageReference Include="Serilog.Settings.Configuration" Version="8.0.4" />
     <PackageReference Include="Serilog.Sinks.Console" Version="6.0.0" />
     <PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
-    <PackageReference Include="Shuttle.Core.Pipelines.Logging" Version="21.0.0" />
-    <PackageReference Include="Shuttle.Hopper.AzureStorageQueues" Version="21.0.0" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.0" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.0" />
+    <PackageReference Include="Shuttle.Core.Pipelines.Logging" Version="21.0.1-beta" />
+    <PackageReference Include="Shuttle.Hopper.AzureStorageQueues" Version="21.0.1-beta" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.1-beta" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.1-beta" />
   </ItemGroup>
 
   <ItemGroup>

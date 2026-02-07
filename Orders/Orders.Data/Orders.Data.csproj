@@ -14,8 +14,8 @@
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.1" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.0" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.0" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.1-beta" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.1-beta" />
     <PackageReference Include="Terminal.Gui" Version="1.19.0" />
   </ItemGroup>
 
