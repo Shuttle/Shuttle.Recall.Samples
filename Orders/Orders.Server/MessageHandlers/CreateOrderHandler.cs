@@ -6,9 +6,9 @@ using Shuttle.Recall;
 
 namespace Orders.Server.MessageHandlers;
 
-public class CreateOrderHandler(ILogger<CreateOrderHandler> logger, IEventStore eventStore) : IDirectMessageHandler<CreateOrder>
+public class CreateOrderHandler(ILogger<CreateOrderHandler> logger, IEventStore eventStore) : IMessageHandler<CreateOrder>
 {
-    public async Task ProcessMessageAsync(CreateOrder message, CancellationToken cancellationToken = default)
+    public async Task HandleAsync(CreateOrder message, CancellationToken cancellationToken = default)
     {
         var person = new Person();
         var order = new Order(Guid.NewGuid());

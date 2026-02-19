@@ -3,8 +3,6 @@ using Microsoft.Extensions.Hosting;
 using Orders.Data;
 using Orders.Server.EventHandlers;
 using Serilog;
-using Shuttle.Core.Pipelines;
-using Shuttle.Core.Pipelines.Logging;
 using Shuttle.Core.Reflection;
 using Shuttle.Core.Threading;
 using Shuttle.Hopper;
@@ -17,7 +15,7 @@ namespace Orders.Server;
 
 internal class Program
 {
-    private static async Task Main(string[] args)
+    private static async Task Main()
     {
         await Host.CreateDefaultBuilder()
             .ConfigureAppConfiguration((_, configurationBuilder) =>
@@ -62,6 +60,7 @@ internal class Program
                             {
                                 builder.Options.ConnectionString = context.Configuration.GetConnectionString("EventProcessingConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'EventProcessingConnection' is required which points to a Sql Server database that will contain the projections.");
                                 builder.Options.Schema = "recall_samples";
+                                builder.Options.DbConnectionServiceKey = "Orders";
                             })
                             .AddProjection("orders").AddEventHandler<OrderHandler>();
                     })
@@ -78,17 +77,7 @@ internal class Program
                                 });
                             });
                     })
-                    .AddOrderData()
-                    .AddPipelineLogging(builder =>
-                    {
-                        builder.Configure(options =>
-                        {
-                            options.Filters.Add(new()
-                            {
-                                PipelineName = typeof(SaveEventStreamPipeline).FullName!
-                            });
-                        });
-                    });
+                    .AddOrderData();
             })
             .Build()
             .RunAsync();

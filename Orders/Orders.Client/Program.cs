@@ -89,7 +89,7 @@ internal class Program
 
         await host.StartAsync();
 
-        var serviceBus = host.Services.GetRequiredService<IServiceBus>();
+        var bus = host.Services.GetRequiredService<IBus>();
         var dbContextFactory = host.Services.GetRequiredService<IDbContextFactory<OrderDbContext>>();
 
         // The above has to be before this; else there are synchronization context/blocking issues.
@@ -190,7 +190,7 @@ internal class Program
                 {
                     case "create":
                     {
-                        await serviceBus.SendAsync(new CreateOrder());
+                        await bus.SendAsync(new CreateOrder());
 
                         Log("'CreateOrder' message sent.", Color.BrightCyan);
 
