@@ -90,7 +90,7 @@ internal class Program
         await host.StartAsync();
 
         var bus = host.Services.GetRequiredService<IBus>();
-        var dbContextFactory = host.Services.GetRequiredService<IDbContextFactory<OrderDbContext>>();
+        var dbContext = host.Services.GetRequiredService<OrderDbContext>();
 
         // The above has to be before this; else there are synchronization context/blocking issues.
         Application.Init();
@@ -203,8 +203,6 @@ internal class Program
                     }
                     case "list-orders":
                     {
-                        await using var dbContext = await dbContextFactory.CreateDbContextAsync();
-
                         var orders = await dbContext.Orders.Include(item => item.Items).AsNoTracking()
                             .OrderByDescending(item => item.DateRegistered)
                             .Take(5)
@@ -242,7 +240,7 @@ internal class Program
 
                         no.Clicked += () => Application.RequestStop();
 
-                        yes.Clicked += async () =>
+                        yes.Clicked += () =>
                         {
                             Application.RequestStop();
 
