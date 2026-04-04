@@ -33,50 +33,45 @@ internal class Program
             .ConfigureServices((context, services) =>
             {
                 services
-                    .AddThreading(builder =>
+                    .AddThreading(options =>
                     {
-                        builder.ConfigureThreading(options =>
+                        options.ProcessorException += (eventArgs, _) =>
                         {
-                            options.ProcessorException += (eventArgs, _) =>
-                            {
-                                Console.WriteLine($"[ProcessorException] : service key = '{eventArgs.ProcessorThread.ServiceKey}' / exception = '{eventArgs.Exception?.AllMessages() ?? "null"}'");
+                            Console.WriteLine($"[ProcessorException] : service key = '{eventArgs.ProcessorThread.ServiceKey}' / exception = '{eventArgs.Exception?.AllMessages() ?? "null"}'");
 
-                                return Task.CompletedTask;
-                            };
+                            return Task.CompletedTask;
+                        };
+                    })
+                    .Services
+                    .AddRecall(options =>
+                    {
+                        options.EventStore.PrimitiveEventSequencerIdleDurations = [TimeSpan.FromSeconds(1)];
+                        options.EventProcessing.ProjectionProcessorIdleDurations = [TimeSpan.FromSeconds(1)];
+                    })
+                    .UseSqlServerEventStorage(options =>
+                    {
+                        options.ConnectionString = context.Configuration.GetConnectionString("Orders") ?? throw new ApplicationException("A 'ConnectionString' with name 'Orders' is required which points to a Sql Server database that will contain the event storage.");
+                        options.Schema = "recall_samples";
+                        options.DbConnectionServiceKey = "OrdersDbConnection";
+                    })
+                    .UseSqlServerEventProcessing()
+                    .AddProjection("orders", builder =>
+                    {
+                        builder.AddEventHandler<OrderHandler>();
+                    })
+                    .Services
+                    .AddHopper(options =>
+                    {
+                        context.Configuration.GetSection(HopperOptions.SectionName).Bind(options);
+                    })
+                    .UseAzureStorageQueues(builder =>
+                    {
+                        builder.Configure("recall-samples", options =>
+                        {
+                            options.ConnectionString = context.Configuration.GetConnectionString("Azurite")!;
                         });
                     })
-                    .AddRecall(recallBuilder =>
-                    {
-                        recallBuilder.Options.EventStore.PrimitiveEventSequencerIdleDurations = [TimeSpan.FromSeconds(1)];
-                        recallBuilder.Options.EventProcessing.ProjectionProcessorIdleDurations = [TimeSpan.FromSeconds(1)];
-
-                        recallBuilder
-                            .UseSqlServerEventStorage(builder =>
-                            {
-                                builder.Options.ConnectionString = context.Configuration.GetConnectionString("StorageConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'StorageConnection' is required which points to a Sql Server database that will contain the event storage.");
-                                builder.Options.Schema = "recall_samples";
-                            })
-                            .UseSqlServerEventProcessing(builder =>
-                            {
-                                builder.Options.ConnectionString = context.Configuration.GetConnectionString("EventProcessingConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'EventProcessingConnection' is required which points to a Sql Server database that will contain the projections.");
-                                builder.Options.Schema = "recall_samples";
-                                builder.Options.DbConnectionServiceKey = "Orders";
-                            })
-                            .AddProjection("orders").AddEventHandler<OrderHandler>();
-                    })
-                    .AddHopper(hopperBuilder =>
-                    {
-                        context.Configuration.GetSection(HopperOptions.SectionName).Bind(hopperBuilder.Options);
-
-                        hopperBuilder
-                            .UseAzureStorageQueues(builder =>
-                            {
-                                builder.AddOptions("recall-samples", new()
-                                {
-                                    ConnectionString = context.Configuration.GetConnectionString("Azurite")!
-                                });
-                            });
-                    })
+                    .Services
                     .AddOrderData();
             })
             .Build()

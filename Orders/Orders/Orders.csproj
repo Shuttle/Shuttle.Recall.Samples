@@ -7,7 +7,7 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Shuttle.Core.Contract" Version="21.0.1-rc1" />
+    <PackageReference Include="Shuttle.Core.Contract" Version="21.0.1-rc3" />
   </ItemGroup>
 
   <ItemGroup>

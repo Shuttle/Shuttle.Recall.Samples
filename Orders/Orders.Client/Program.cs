@@ -58,31 +58,26 @@ internal class Program
             .ConfigureServices((_, services) =>
             {
                 services.AddSingleton<IConfiguration>(configuration)
-                    .AddRecall(recallBuilder =>
+                    .AddRecall()
+                    .UseSqlServerEventStorage(options =>
                     {
-                        recallBuilder
-                            .UseSqlServerEventStorage(builder =>
-                            {
-                                builder.Options.ConnectionString = configuration.GetConnectionString("StorageConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'StorageConnection' is required which points to a Sql Server database that will contain the event storage.");
-                                builder.Options.Schema = "recall_samples";
-                            })
-                            .UseSqlServerEventProcessing(builder =>
-                            {
-                                builder.Options.ConnectionString = configuration.GetConnectionString("EventProcessingConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'EventProcessingConnection' is required which points to a Sql Server database that will contain the projections.");
-                                builder.Options.Schema = "recall_samples";
-                            })
-                            .SuppressEventProcessorHostedService();
+                        options.ConnectionString = configuration.GetConnectionString("StorageConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'StorageConnection' is required which points to a Sql Server database that will contain the event storage.");
+                        options.Schema = "recall_samples";
                     })
-                    .AddHopper(hopperBuilder =>
+                    .UseSqlServerEventProcessing()
+                    .Services
+                    .AddHopper(options =>
                     {
-                        configuration.GetSection(HopperOptions.SectionName).Bind(hopperBuilder.Options);
-
-                        hopperBuilder
-                            .UseAzureStorageQueues(builder =>
-                            {
-                                builder.AddOptions("recall-samples", new() { ConnectionString = "UseDevelopmentStorage=true;" });
-                            });
+                        configuration.GetSection(HopperOptions.SectionName).Bind(options);
                     })
+                    .UseAzureStorageQueues(builder =>
+                    {
+                        builder.Configure("recall-samples", options =>
+                        {
+                            options.ConnectionString = "UseDevelopmentStorage=true;";
+                        });
+                    })
+                    .Services
                     .AddOrderData();
             })
             .Build();
