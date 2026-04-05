@@ -7,7 +7,6 @@ using Orders.Messages.v1;
 using Shuttle.Hopper;
 using Shuttle.Hopper.AzureStorageQueues;
 using Shuttle.Recall;
-using Shuttle.Recall.SqlServer.EventProcessing;
 using Shuttle.Recall.SqlServer.Storage;
 using Terminal.Gui;
 using Attribute = Terminal.Gui.Attribute;
@@ -61,10 +60,9 @@ internal class Program
                     .AddRecall()
                     .UseSqlServerEventStorage(options =>
                     {
-                        options.ConnectionString = configuration.GetConnectionString("StorageConnection") ?? throw new ApplicationException("A 'ConnectionString' with name 'StorageConnection' is required which points to a Sql Server database that will contain the event storage.");
+                        options.ConnectionString = configuration.GetConnectionString("Storage") ?? throw new ApplicationException("A 'ConnectionString' with name 'Storage' is required which points to a Sql Server database that will contain the event storage.");
                         options.Schema = "recall_samples";
                     })
-                    .UseSqlServerEventProcessing()
                     .Services
                     .AddHopper(options =>
                     {

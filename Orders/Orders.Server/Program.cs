@@ -50,15 +50,12 @@ internal class Program
                     })
                     .UseSqlServerEventStorage(options =>
                     {
-                        options.ConnectionString = context.Configuration.GetConnectionString("Orders") ?? throw new ApplicationException("A 'ConnectionString' with name 'Orders' is required which points to a Sql Server database that will contain the event storage.");
+                        options.ConnectionString = context.Configuration.GetConnectionString("Storage") ?? throw new ApplicationException("A 'ConnectionString' with name 'Storage' is required which points to a Sql Server database that will contain the event storage.");
                         options.Schema = "recall_samples";
-                        options.DbConnectionServiceKey = "OrdersDbConnection";
                     })
+                    .RegisterPrimitiveEventSequencing()
                     .UseSqlServerEventProcessing()
-                    .AddProjection("orders", builder =>
-                    {
-                        builder.AddEventHandler<OrderHandler>();
-                    })
+                    .AddProjection<OrderHandler>("orders")
                     .Services
                     .AddHopper(options =>
                     {
@@ -71,6 +68,7 @@ internal class Program
                             options.ConnectionString = context.Configuration.GetConnectionString("Azurite")!;
                         });
                     })
+                    .AddMessageHandlersFrom(typeof(Program).Assembly)
                     .Services
                     .AddOrderData();
             })
