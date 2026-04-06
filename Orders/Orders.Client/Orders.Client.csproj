@@ -10,6 +10,7 @@
 
   <ItemGroup>
     <PackageReference Include="Shuttle.Hopper.AzureStorageQueues" Version="21.0.1-rc3" />
+    <PackageReference Include="Shuttle.Hopper.SqlServer.Queue" Version="21.0.1-rc3" />
     <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.2-rc3" />
     <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.2-rc3" />
     <PackageReference Include="Terminal.Gui" Version="1.19.0" />

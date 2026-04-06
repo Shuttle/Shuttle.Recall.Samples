@@ -6,6 +6,7 @@ using Orders.Data;
 using Orders.Messages.v1;
 using Shuttle.Hopper;
 using Shuttle.Hopper.AzureStorageQueues;
+using Shuttle.Hopper.SqlServer.Queue;
 using Shuttle.Recall;
 using Shuttle.Recall.SqlServer.Storage;
 using Terminal.Gui;
@@ -56,11 +57,14 @@ internal class Program
         var host = new HostBuilder()
             .ConfigureServices((_, services) =>
             {
+                var connectionString = configuration.GetConnectionString("Storage")
+                                       ?? throw new ApplicationException("A 'ConnectionString' with name 'Storage' is required which points to a Sql Server database that will contain the event storage.");
+
                 services.AddSingleton<IConfiguration>(configuration)
                     .AddRecall()
                     .UseSqlServerEventStorage(options =>
                     {
-                        options.ConnectionString = configuration.GetConnectionString("Storage") ?? throw new ApplicationException("A 'ConnectionString' with name 'Storage' is required which points to a Sql Server database that will contain the event storage.");
+                        options.ConnectionString = connectionString;
                         options.Schema = "recall_samples";
                     })
                     .Services
@@ -75,6 +79,16 @@ internal class Program
                             options.ConnectionString = "UseDevelopmentStorage=true;";
                         });
                     })
+                    .UseSqlServerQueue(builder =>
+                    {
+                        builder.Configure("recall-samples", options =>
+                        {
+                            options.ConnectionString = connectionString;
+                            options.Schema = "recall_samples";
+
+                            options.WithOutboxDbContext<OrderDbContext>();
+                        });
+                    })
                     .Services
                     .AddOrderData();
             })
@@ -83,7 +97,7 @@ internal class Program
         await host.StartAsync();
 
         var bus = host.Services.GetRequiredService<IBus>();
-        var dbContext = host.Services.GetRequiredService<OrderDbContext>();
+        var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
 
         // The above has to be before this; else there are synchronization context/blocking issues.
         Application.Init();
@@ -120,6 +134,7 @@ internal class Program
         var commands = new List<Command>
         {
             new() { Key = "create", Description = "Create an order", Color = Color.Brown },
+            new() { Key = "create-fail", Description = "Create an order (fail, to test outbox)", Color = Color.BrightYellow },
             new() { Key = "list-orders", Description = "List last 5 orders", Color = Color.Brown },
             new() { Key = "clear", Description = "Clear log", Color = Color.Brown },
             //new() { Key = "reset", Description = "Reset all data (DESTRUCTIVE - PLEASE BE SURE)", Color = Color.Brown },
@@ -189,6 +204,31 @@ internal class Program
 
                         break;
                     }
+                    case "create-fail":
+                    {
+                        using var scope = scopeFactory.CreateScope();
+                        var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+
+                        try
+                        {
+                            using (dbContext.Database.BeginTransactionAsync())
+                            {
+                                await bus.SendAsync(new CreateOrder());
+
+                                Log("'CreateOrder' message sent.  Will fail.", Color.BrightCyan);
+
+                                await dbContext.SaveChangesAsync();
+
+                                throw new ApplicationException("Should not send message");
+                            }
+                        }
+                        catch (Exception ex)
+                        {
+                            Log(ex.Message, Color.BrightRed);
+                        }
+
+                        break;
+                    }
                     case "clear":
                     {
                         ClearLog();
@@ -196,6 +236,9 @@ internal class Program
                     }
                     case "list-orders":
                     {
+                        using var scope = scopeFactory.CreateScope();
+                        var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+
                         var orders = await dbContext.Orders.Include(item => item.Items).AsNoTracking()
                             .OrderByDescending(item => item.DateRegistered)
                             .Take(5)
