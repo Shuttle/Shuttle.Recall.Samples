@@ -57,14 +57,12 @@ internal class Program
         var host = new HostBuilder()
             .ConfigureServices((_, services) =>
             {
-                var connectionString = configuration.GetConnectionString("Storage")
-                                       ?? throw new ApplicationException("A 'ConnectionString' with name 'Storage' is required which points to a Sql Server database that will contain the event storage.");
-
                 services.AddSingleton<IConfiguration>(configuration)
                     .AddRecall()
                     .UseSqlServerEventStorage(options =>
                     {
-                        options.ConnectionString = connectionString;
+                        options.ConnectionString = configuration.GetConnectionString("Storage")
+                                                   ?? throw new ApplicationException("A 'ConnectionString' with name 'Storage' is required which points to a Sql Server database that will contain the event storage.");
                         options.Schema = "recall_samples";
                     })
                     .Services
@@ -81,13 +79,14 @@ internal class Program
                     })
                     .UseSqlServerQueue(builder =>
                     {
-                        builder.Configure("recall-samples", options =>
-                        {
-                            options.ConnectionString = connectionString;
-                            options.Schema = "recall_samples";
-
-                            options.WithOutboxDbContext<OrderDbContext>();
-                        });
+                        builder
+                            .Configure("recall-samples", options =>
+                            {
+                                options.ConnectionString = configuration.GetConnectionString("Orders")
+                                                           ?? throw new ApplicationException("A 'ConnectionString' with name 'Orders' is required which points to a Sql Server database that will contain the event storage.");
+                                options.Schema = "recall_samples";
+                            })
+                            .UseOutboxDbContext<OrderDbContext>();
                     })
                     .Services
                     .AddOrderData();
@@ -96,7 +95,6 @@ internal class Program
 
         await host.StartAsync();
 
-        var bus = host.Services.GetRequiredService<IBus>();
         var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
 
         // The above has to be before this; else there are synchronization context/blocking issues.
@@ -198,6 +196,9 @@ internal class Program
                 {
                     case "create":
                     {
+                        using var scope = scopeFactory.CreateScope();
+                        var bus = scope.ServiceProvider.GetRequiredService<IBus>();
+
                         await bus.SendAsync(new CreateOrder());
 
                         Log("'CreateOrder' message sent.", Color.BrightCyan);
@@ -208,6 +209,7 @@ internal class Program
                     {
                         using var scope = scopeFactory.CreateScope();
                         var dbContext = scope.ServiceProvider.GetRequiredService<OrderDbContext>();
+                        var bus = scope.ServiceProvider.GetRequiredService<IBus>();
 
                         try
                         {
