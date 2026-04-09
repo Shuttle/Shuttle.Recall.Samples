@@ -1,5 +1,5 @@
 ﻿using Orders.Events.v1;
-using Shuttle.Core.Contract;
+using Shuttle.Contract;
 
 namespace Orders;
 
