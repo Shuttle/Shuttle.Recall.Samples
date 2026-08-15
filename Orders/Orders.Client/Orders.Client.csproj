@@ -1,0 +1,30 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net10.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <UserSecretsId>140d8971-39e3-4149-bb88-e626e5361017</UserSecretsId>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Shuttle.Hopper.AzureStorageQueues" Version="21.0.2" />
+    <PackageReference Include="Shuttle.Hopper.SqlServer.Queue" Version="21.0.2" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.3" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.3" />
+    <PackageReference Include="Terminal.Gui" Version="1.19.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Orders.Data\Orders.Data.csproj" />
+    <ProjectReference Include="..\Orders.Messages\Orders.Messages.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="appsettings.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+</Project>

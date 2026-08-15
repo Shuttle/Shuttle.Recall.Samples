@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Orders.Client/Orders.Client.csproj" Id="5eec4463-b600-4559-9149-b6caa27276f9" />
+  <Project Path="Orders.Data/Orders.Data.csproj" Id="66ef8ae3-af41-4a63-b237-292431e01de1" />
+  <Project Path="Orders.Messages/Orders.Messages.csproj" Id="8844b343-3aeb-469b-9554-e64042cb1543" />
+  <Project Path="Orders.Server/Orders.Server.csproj" Id="311c369b-8bfd-48b6-ba02-fd9f1411f354" />
+  <Project Path="Orders/Orders.csproj" Id="7ecac3fe-0b5a-4cb5-8776-0f3640f14788" />
+</Solution>
