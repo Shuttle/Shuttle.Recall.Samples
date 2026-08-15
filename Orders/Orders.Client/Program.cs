@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System.Collections.ObjectModel;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -9,40 +10,37 @@ using Shuttle.Hopper.AzureStorageQueues;
 using Shuttle.Hopper.SqlServer.Queue;
 using Shuttle.Recall;
 using Shuttle.Recall.SqlServer.Storage;
-using Terminal.Gui;
-using Attribute = Terminal.Gui.Attribute;
-using Color = Terminal.Gui.Color;
+using Terminal.Gui.App;
+using Terminal.Gui.Drawing;
+using Terminal.Gui.ViewBase;
+using Terminal.Gui.Views;
 
 namespace Orders.Client;
 
 internal class Program
 {
-    private static readonly List<LogEntry> LogEntries = [];
+    private static readonly ObservableCollection<LogEntry> LogEntries = [];
 
-    private static ListView _outputListView = null!;
+    private static IApplication _app = null!;
+    private static ListView<LogEntry> _outputListView = null!;
 
     private static void ClearLog()
     {
-        Application.MainLoop.Invoke(() =>
-        {
-            LogEntries.Clear();
-            _outputListView.SetSource(LogEntries.ToList());
-        });
+        _app.Invoke(() => LogEntries.Clear());
     }
 
     private static void Log(string message, Color color)
     {
-        Application.MainLoop.Invoke(() =>
+        _app.Invoke(() =>
         {
             LogEntries.Add(new($"[{DateTime.Now:HH:mm:ss}] {message}", color));
-            _outputListView.SetSource(LogEntries.ToList());
 
             if (LogEntries.Count <= 0)
             {
                 return;
             }
 
-            _outputListView.SelectedItem = LogEntries.Count - 1;
+            _outputListView.Index = LogEntries.Count - 1;
             _outputListView.EnsureSelectedItemVisible();
         });
     }
@@ -98,93 +96,109 @@ internal class Program
         var scopeFactory = host.Services.GetRequiredService<IServiceScopeFactory>();
 
         // The above has to be before this; else there are synchronization context/blocking issues.
-        Application.Init();
+        using var app = Application.Create().Init();
+        _app = app;
 
-        var defaultScheme = new ColorScheme
+        var defaultScheme = new Scheme
         {
-            Normal = Application.Driver.MakeAttribute(Color.White, Color.Black),
-            Focus = Application.Driver.MakeAttribute(Color.Black, Color.Gray),
-            HotNormal = Application.Driver.MakeAttribute(Color.BrightCyan, Color.Black),
-            HotFocus = Application.Driver.MakeAttribute(Color.BrightCyan, Color.Gray)
+            Normal = new(Color.White, Color.Black),
+            Focus = new(Color.Black, Color.Gray),
+            HotNormal = new(Color.BrightCyan, Color.Black),
+            HotFocus = new(Color.BrightCyan, Color.Gray)
         };
 
-        var top = Application.Top;
-        top.ColorScheme = defaultScheme;
-
-        var promptWin = new Window("Message Prompts")
+        var top = new Window
         {
+            Width = Dim.Fill(),
+            Height = Dim.Fill()
+        };
+        top.SetScheme(defaultScheme);
+
+        var promptWin = new Window
+        {
+            Title = "Message Prompts",
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
-            Height = Dim.Percent(40),
-            ColorScheme = defaultScheme
+            Height = Dim.Percent(40)
         };
+        promptWin.SetScheme(defaultScheme);
 
-        var outputWin = new Window("System Output (Press Ctrl+Q to Exit)")
+        var outputWin = new Window
         {
+            Title = "System Output (Press Ctrl+Q to Exit)",
             X = 0,
             Y = Pos.Bottom(promptWin),
             Width = Dim.Fill(),
-            Height = Dim.Fill(),
-            ColorScheme = defaultScheme
+            Height = Dim.Fill()
         };
+        outputWin.SetScheme(defaultScheme);
 
         var commands = new List<Command>
         {
-            new() { Key = "create", Description = "Create an order", Color = Color.Brown },
+            new() { Key = "create", Description = "Create an order", Color = Color.Yellow },
             new() { Key = "create-fail", Description = "Create an order (fail, to test outbox)", Color = Color.BrightYellow },
-            new() { Key = "list-orders", Description = "List last 5 orders", Color = Color.Brown },
-            new() { Key = "clear", Description = "Clear log", Color = Color.Brown },
-            //new() { Key = "reset", Description = "Reset all data (DESTRUCTIVE - PLEASE BE SURE)", Color = Color.Brown },
+            new() { Key = "list-orders", Description = "List last 5 orders", Color = Color.Yellow },
+            new() { Key = "clear", Description = "Clear log", Color = Color.Yellow },
+            //new() { Key = "reset", Description = "Reset all data (DESTRUCTIVE - PLEASE BE SURE)", Color = Color.Yellow },
             new() { Key = "exit", Description = "(exit)", Color = Color.Magenta }
         };
 
-        var commandListView = new ListView(commands)
+        var commandListView = new ListView<Command>
         {
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill(),
-            CanFocus = true,
-            ColorScheme = defaultScheme
+            CanFocus = true
         };
+        commandListView.SetScheme(defaultScheme);
+        commandListView.SetSource(new(commands));
 
-        commandListView.RowRender += args =>
+        commandListView.RowRender += (_, args) =>
         {
-            if (commandListView.SelectedItem == args.Row)
+            if (commandListView.Index == args.Row)
             {
                 return;
             }
 
-            args.RowAttribute = new Attribute(commands[args.Row].Color, Color.Black);
+            args.RowAttribute = new(commands[args.Row].Color, Color.Black);
         };
 
-        _outputListView = new(LogEntries)
+        _outputListView = new()
         {
             X = 0,
             Y = 0,
             Width = Dim.Fill(),
             Height = Dim.Fill(),
-            CanFocus = false,
-            ColorScheme = defaultScheme
+            CanFocus = false
         };
+        _outputListView.SetScheme(defaultScheme);
+        _outputListView.SetSource(LogEntries);
 
-        _outputListView.RowRender += args =>
+        _outputListView.RowRender += (_, args) =>
         {
-            args.RowAttribute = new Attribute(LogEntries[args.Row].Foreground, Color.Black);
+            args.RowAttribute = new(LogEntries[args.Row].Foreground, Color.Black);
         };
 
         promptWin.Add(commandListView);
         outputWin.Add(_outputListView);
         top.Add(promptWin, outputWin);
 
-        commandListView.OpenSelectedItem += async args =>
+        commandListView.Accepting += async (_, args) =>
         {
-            var cmd = (Command)args.Value;
+            var cmd = commandListView.SelectedItem;
+
+            if (cmd is null)
+            {
+                return;
+            }
+
+            args.Handled = true;
 
             if (cmd.Key == "exit")
             {
-                Application.RequestStop();
+                _app.RequestStop();
                 return;
             }
 
@@ -260,27 +274,24 @@ internal class Program
                     }
                     case "reset":
                     {
-                        var confirm = new Dialog("⚠️  Dangerous Operation", 70, 12);
+                        var confirm = new Dialog { Title = "⚠️  Dangerous Operation", Width = 70, Height = 12 };
+
+                        var warningLabel = new Label { X = 1, Y = 1, Text = "This will DELETE ALL DATA." };
+                        warningLabel.SetScheme(new() { Normal = new(Color.BrightRed, Color.Black) });
 
                         confirm.Add(
-                            new Label(1, 1, "This will DELETE ALL DATA.")
-                            {
-                                ColorScheme = new()
-                                {
-                                    Normal = Application.Driver.MakeAttribute(Color.BrightRed, Color.Black)
-                                }
-                            },
-                            new Label(1, 3, "Are you absolutely sure?")
+                            warningLabel,
+                            new Label { X = 1, Y = 3, Text = "Are you absolutely sure?" }
                         );
 
-                        var no = new Button("No");
-                        var yes = new Button("Yes, delete everything");
+                        var no = new Button { Text = "No" };
+                        var yes = new Button { Text = "Yes, delete everything" };
 
-                        no.Clicked += () => Application.RequestStop();
+                        no.Accepting += (_, _) => _app.RequestStop(confirm);
 
-                        yes.Clicked += () =>
+                        yes.Accepting += (_, _) =>
                         {
-                            Application.RequestStop();
+                            _app.RequestStop(confirm);
 
                             Log("Reset confirmed by user.", Color.BrightRed);
 
@@ -290,7 +301,7 @@ internal class Program
                         confirm.AddButton(no);
                         confirm.AddButton(yes);
 
-                        Application.Run(confirm);
+                        _app.Run(confirm);
                         break;
                     }
                 }
@@ -301,8 +312,8 @@ internal class Program
             }
         };
 
-        Application.Run();
-        Application.Shutdown();
+        app.Run(top);
+        top.Dispose();
 
         Console.ResetColor();
         Console.Clear();
