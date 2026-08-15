@@ -47,8 +47,6 @@ internal class Program
                     {
                         options.EventStore.PrimitiveEventSequencerIdleDurations = [TimeSpan.FromSeconds(1)];
                         options.EventProcessing.ProjectionProcessorIdleDurations = [TimeSpan.FromSeconds(1)];
-
-                        options.EventProcessing.ImmediateConsistency.Enabled = true;
                     })
                     .UseSqlServerEventStorage(options =>
                     {

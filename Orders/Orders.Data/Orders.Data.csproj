@@ -18,7 +18,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="22.0.0-alpha.1" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="22.0.0-alpha.1" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="22.0.0-beta.1" />
     <PackageReference Include="Terminal.Gui" Version="2.4.17" />
   </ItemGroup>
 

@@ -137,6 +137,7 @@ internal class Program
         var commands = new List<Command>
         {
             new() { Key = "create", Description = "Create an order", Color = Color.Yellow },
+            new() { Key = "create-immediate", Description = "Create an order (immediate consistency)", Color = Color.Yellow },
             new() { Key = "create-fail", Description = "Create an order (fail, to test outbox)", Color = Color.BrightYellow },
             new() { Key = "list-orders", Description = "List last 5 orders", Color = Color.Yellow },
             new() { Key = "clear", Description = "Clear log", Color = Color.Yellow },
@@ -216,6 +217,17 @@ internal class Program
                         await bus.SendAsync(new CreateOrder());
 
                         Log("'CreateOrder' message sent.", Color.BrightCyan);
+
+                        break;
+                    }
+                    case "create-immediate":
+                    {
+                        using var scope = scopeFactory.CreateScope();
+                        var bus = scope.ServiceProvider.GetRequiredService<IBus>();
+
+                        await bus.SendAsync(new CreateOrder { ImmediateConsistency = true });
+
+                        Log("'CreateOrder' message sent (immediate consistency).", Color.BrightCyan);
 
                         break;
                     }

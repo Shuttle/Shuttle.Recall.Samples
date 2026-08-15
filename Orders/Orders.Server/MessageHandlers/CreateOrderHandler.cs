@@ -19,7 +19,13 @@ public class CreateOrderHandler(ILogger<CreateOrderHandler> logger, IEventStore 
         stream.Add(order.AddItem("item-2", 2, 200));
         stream.Add(order.AddItem("item-3", 3, 300));
 
-        await eventStore.SaveAsync(stream, cancellationToken: cancellationToken);
+        await eventStore.SaveAsync(stream, builder =>
+        {
+            if (message.ImmediateConsistency)
+            {
+                builder.WithImmediateConsistency();
+            }
+        }, cancellationToken);
 
         logger.LogInformation("[order/created] : id = '{OrderId}' / customer name = '{CustomerName}'", order.Id, order.CustomerName);
     }
