@@ -8,18 +8,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.5" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="10.0.11" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Bogus" Version="35.6.5" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.5">
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="10.0.11">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.3" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.3" />
-    <PackageReference Include="Terminal.Gui" Version="1.19.0" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="22.0.1" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="22.0.1" />
+    <PackageReference Include="Terminal.Gui" Version="2.4.17" />
   </ItemGroup>
 
 </Project>

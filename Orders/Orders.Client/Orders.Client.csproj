@@ -9,11 +9,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Shuttle.Hopper.AzureStorageQueues" Version="21.0.2" />
-    <PackageReference Include="Shuttle.Hopper.SqlServer.Queue" Version="21.0.2" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="21.0.3" />
-    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="21.0.3" />
-    <PackageReference Include="Terminal.Gui" Version="1.19.0" />
+    <PackageReference Include="Shuttle.Hopper.AzureStorageQueues" Version="22.0.1" />
+    <PackageReference Include="Shuttle.Hopper.SqlServer.Queue" Version="22.0.1" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.EventProcessing" Version="22.0.1" />
+    <PackageReference Include="Shuttle.Recall.SqlServer.Storage" Version="22.0.1" />
+    <PackageReference Include="Terminal.Gui" Version="2.4.17" />
   </ItemGroup>
 
   <ItemGroup>
